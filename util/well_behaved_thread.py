@@ -13,20 +13,26 @@
 # limitations under the License.
 from util.logging import *
 from util.exponential_backoff import *
+from util.event import *
+
 import threading
 import traceback
 
+import Queue
+
+
 class WellBehavedThread():
-  def __init__(self, name, cb):
+  def __init__(self, name, idle_cb=None):
     """
     cb should return True if work was performed, False if no work was found.
     """
-    if not cb:
-      raise Exception("Cb must be non null")
     self._name = name
-    self._cb = cb
+    self._idle_event = Event()
+    if idle_cb:
+      self._idle_event.add_listener(idle_cb)
     self._thread = None
     self._run = False
+    self._message_queue = Queue.Queue()
 
   def __del__(self):
     if self._thread:
@@ -37,10 +43,14 @@ class WellBehavedThread():
     return self._name
 
   @property
+  def on_idle(self):
+    return self._idle_event
+
+  @property
   def should_run(self):
     """Returns whether the thread should be running. Will go to false
     before the actual thread stops."""
-    return self._run
+    return self._run and not MessageLoop.is_quit_requested()
 
   def is_runinng(self):
     """Returns whether the thread is running."""
@@ -57,9 +67,10 @@ class WellBehavedThread():
 
   def _thread_main(self):
     exp = ExponentialBackoff()
-    while self._run:
+    while self._run and not MessageLoop.is_quit_requested():
+      self._run_message_queue()
       try:
-        ret = self._cb()
+        ret = self._idle_event.fire()
         if ret:
           exp.reset()
         else:
@@ -75,3 +86,35 @@ class WellBehavedThread():
     self._thread.join()
     log2("%s thread stopped", self._name)
     self._thread = None
+
+  def add_message(self, cb,*args):
+    if not callable(cb):
+      raise Exception("must be callable")
+    self._message_queue.put(Message(cb,args))
+
+  def _run_message_queue(self):
+    """
+    Runs the message queue until it is empty. Don't do this unless you're cofident that nobody else is posting messages.
+    """
+    while True:
+      try:
+        msg = self._message_queue.get(block=False)
+        self._run_cb(msg.cb,*msg.ud)
+      except Queue.Empty:
+        return
+      except Exception, ex:
+        print ex
+        return
+
+
+  def _run_cb(self,cb,*args):
+    """Runs a callback and saves exceptions if needed."""
+    try:
+      ret = cb(*args)
+    except QuitException:
+      raise
+    except Exception:
+      traceback.print_exc()
+      ret = None
+    return ret
+

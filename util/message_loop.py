@@ -340,6 +340,7 @@ class MessageLoop:
     # run gtk main loop
     while not _quit_requested:
       MessageLoop._run_until_empty()
+      MessageLoop._run_pending_messages()
       try:
         idle_cb()
       except KeyboardInterrupt:
@@ -355,7 +356,6 @@ class MessageLoop:
         print "Exception occurred in idle cb:"
         traceback.print_exc()
 
-    _quit_requested = False
     _run_thread_is_gtk = False
 
     if did_init:
@@ -386,7 +386,6 @@ class MessageLoop:
 #      print "Putting GTK into threaded mode."
 #      gtk.gdk.threads_init()
     gtk.main()
-    _quit_requested = False
     _run_thread_is_gtk = False
 
     if did_init:
