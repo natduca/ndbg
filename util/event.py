@@ -38,15 +38,17 @@ class Event(object):
     self._listeners = []
 
   def fire(self,*args):
+    last = None
     for cb in self._listeners:
       try:
-        cb(*args)
+        last = cb(*args)
       except Exception,e:
 #        cur_stack = traceback.extract_stack()
         print "Error on callback:"
         traceback.print_stack()
         traceback.print_exc()
         print "\n\n"
+    return last
 
   def post(self,*args):
     """This function fires the listeners via the message loop, meaning notification won't happen until the toplevel message pump."""
