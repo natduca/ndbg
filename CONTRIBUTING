@@ -1,0 +1,74 @@
+Welcome to "The Code" ;)
+---------------------------------------------------------------------------
+ui/
+  main_control  - controls everything...  debugger, editor, tabs, everything
+
+  overlay       - a logical group of menus, tabs, hotkeys that can be 
+                  attached "in bulk" to the  main UI, used so that we
+                  can customize the main window in a dentralized fashion.
+
+  main_window   - sets up the actual frame. No code other than the overlay should talk to this.
+
+  editor_base   - the base class for ndbg's text editor. subclass this to
+                  use your editor of choice for text editing, e.g.:
+                     - source_vieweditor : gtksourceview-based text editor, a la GEdit
+                     - emacs_editor      : emacs editor, uses gtkplug for embedding
+                     - gvim_editor       : gvim editor, uses gtkplug for embedding
+                     - vim_editor        : vim editor, runs vim in a pty via a vte.Terminal
+  <various tabs>
+
+debugger/
+  filemanager   - deals with finding files related to source code
+
+  debugger     - The debugger. Provides:
+                    - status
+                    - processes, threads
+                    - active_thread
+                    - break/next/step/continue
+                    - breakpoints
+                 As well as
+                    - attach
+                    - launch
+
+  dprocess     - "Debugged Process," abstract representation of a process being debugged.
+
+  dthread      - "Debugged Thread," abstract representation of a thread.
+
+  dpassive_process    - A process ndbg is aware of, running, but not being debugged.
+
+  dlaunchable_process - A process waiting to be launched by ndbg, or officially ignored
+                        by user action.
+
+  gdb_backend  - The actual "backend" for talking to gdb. Handles one process
+                 at a time, with the debugger class taking care of keeping the
+                 different gdb's in sync.
+
+
+util/          - utility classes of various sorts for use in gdb
+  event        - an object you can add listeners to, and fire those listeners.
+                 think: gtk signals or C# events
+
+  messageloop  - mechanism for enqueuing callbacks to the main GUI thread for execution
+
+  bindinglist  - a list-like class that raises add/removed events when items are added
+
+  identifieditemlist - a list-like class that allows dictionary-lookup operatiosn on
+                       its contents based on an agreed-upon field
+
+  settings     - mechanism to persist objects in ~/.ndbg across runs
+
+tests/         - Test cases based on a python.unittest-based framework
+  apps/        - test apps that can be used for building test cases
+  debugger/
+  utils/
+  ui/
+
+
+
+UI side notes:
+- Tabs are created with handles to mainControl, self.mc. To get
+  to the debugger from a tab, self.mc.debugger
+
+
+Debugger side notes:
+- We use GDB in mi3 mode. Definitely worth a read if you're not familiar with it.

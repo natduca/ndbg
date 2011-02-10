@@ -1,0 +1,47 @@
+Summary
+---------------------------------------------------------------------------
+Nicer debugger is a GUI for GDB, with killer features such as:
+- Multiple process support
+- Emacs and Vim as the text editor
+- Passive process support (launch now, debug later)
+- Can still use GDB commands
+- Pretty Gtk user interface (no more ddd uglies!)
+
+In a nutshell: ndbg --help
+---------------------------------------------------------------------------
+Run a program, without and with arguments:
+  ndbg <executable>
+  ndbg --args <executable> <args>
+
+Attach to a process:
+  ndbg <pid>
+
+Run an executable in an existing ndbg:
+  ndbg_in_existing <executable>         --> 
+  ndbg_in_existing --args <executable> <args>
+
+Attach to a process in an existing ndbg:
+  ndbg_in_existing <pid>
+
+
+Testing
+---------------------------------------------------------------------------
+Run all unit tests
+  ndbg --test                        --> run unit tests
+
+Run specific test matching /foo/:
+  ndbg --test foo
+
+
+Dependencies
+---------------------------------------------------------------------------
+- gdb 7.0 or greater
+- Python2.6
+- pygtk
+- python-vte
+- python-dbus
+
+One of:
+- python-gtksourceview2
+- emacs23+
+- gvim7.2 with +clientserver

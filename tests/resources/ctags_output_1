@@ -1,0 +1,58 @@
+CallDoDeferredUpdate	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::CallDoDeferredUpdate() {$/;"	f	class:RenderWidget
+CleanupWindowInPluginMoves	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::CleanupWindowInPluginMoves(gfx::PluginWindowHandle window) {$/;"	f	class:RenderWidget
+ClearFocus	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::ClearFocus() {$/;"	f	class:RenderWidget
+Close	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::Close() {$/;"	f	class:RenderWidget
+CompleteInit	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::CompleteInit(gfx::NativeViewId parent_hwnd) {$/;"	f	class:RenderWidget
+Create	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^RenderWidget* RenderWidget::Create(int32 opener_id,$/;"	f	class:RenderWidget
+CreateWebWidget	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^WebWidget* RenderWidget::CreateWebWidget(RenderWidget* render_widget) {$/;"	f	class:RenderWidget
+DoDeferredClose	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::DoDeferredClose() {$/;"	f	class:RenderWidget
+DoDeferredUpdate	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::DoDeferredUpdate() {$/;"	f	class:RenderWidget
+DoInit	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::DoInit(int32 opener_id,$/;"	f	class:RenderWidget
+GetBitmapForOptimizedPluginPaint	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^bool RenderWidget::GetBitmapForOptimizedPluginPaint($/;"	f	class:RenderWidget
+Init	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::Init(int32 opener_id) {$/;"	f	class:RenderWidget
+OnClose	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnClose() {$/;"	f	class:RenderWidget
+OnCreatingNewAck	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnCreatingNewAck(gfx::NativeViewId parent) {$/;"	f	class:RenderWidget
+OnHandleInputEvent	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnHandleInputEvent(const IPC::Message& message) {$/;"	f	class:RenderWidget
+OnImeConfirmComposition	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnImeConfirmComposition() {$/;"	f	class:RenderWidget
+OnImeSetComposition	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnImeSetComposition($/;"	f	class:RenderWidget
+OnMouseCaptureLost	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnMouseCaptureLost() {$/;"	f	class:RenderWidget
+OnMsgPaintAtSize	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnMsgPaintAtSize(const TransportDIB::Handle& dib_handle,$/;"	f	class:RenderWidget
+OnMsgRepaint	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnMsgRepaint(const gfx::Size& size_to_paint) {$/;"	f	class:RenderWidget
+OnRequestMoveAck	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnRequestMoveAck() {$/;"	f	class:RenderWidget
+OnResize	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnResize(const gfx::Size& new_size,$/;"	f	class:RenderWidget
+OnSetFocus	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnSetFocus(bool enable) {$/;"	f	class:RenderWidget
+OnSetInputMethodActive	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnSetInputMethodActive(bool is_active) {$/;"	f	class:RenderWidget
+OnSetTextDirection	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnSetTextDirection(WebTextDirection direction) {$/;"	f	class:RenderWidget
+OnUpdateRectAck	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnUpdateRectAck() {$/;"	f	class:RenderWidget
+OnWasHidden	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnWasHidden() {$/;"	f	class:RenderWidget
+OnWasRestored	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::OnWasRestored(bool needs_repainting) {$/;"	f	class:RenderWidget
+PaintDebugBorder	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::PaintDebugBorder(const gfx::Rect& rect,$/;"	f	class:RenderWidget
+PaintRect	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::PaintRect(const gfx::Rect& rect,$/;"	f	class:RenderWidget
+RenderWidget	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^RenderWidget::RenderWidget(RenderThreadBase* render_thread,$/;"	f	class:RenderWidget
+SchedulePluginMove	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::SchedulePluginMove($/;"	f	class:RenderWidget
+Send	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^bool RenderWidget::Send(IPC::Message* message) {$/;"	f	class:RenderWidget
+SetBackground	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::SetBackground(const SkBitmap& background) {$/;"	f	class:RenderWidget
+SetHidden	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::SetHidden(bool hidden) {$/;"	f	class:RenderWidget
+SetPendingWindowRect	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::SetPendingWindowRect(const WebRect& rect) {$/;"	f	class:RenderWidget
+UpdateInputMethod	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::UpdateInputMethod() {$/;"	f	class:RenderWidget
+closeWidgetSoon	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::closeWidgetSoon() {$/;"	f	class:RenderWidget
+didActivateAcceleratedCompositing	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::didActivateAcceleratedCompositing(bool active) {$/;"	f	class:RenderWidget
+didBlur	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::didBlur() {$/;"	f	class:RenderWidget
+didChangeCursor	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::didChangeCursor(const WebCursorInfo& cursor_info) {$/;"	f	class:RenderWidget
+didFocus	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::didFocus() {$/;"	f	class:RenderWidget
+didInvalidateRect	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::didInvalidateRect(const WebRect& rect) {$/;"	f	class:RenderWidget
+didScrollRect	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::didScrollRect(int dx, int dy, const WebRect& clip_rect) {$/;"	f	class:RenderWidget
+next_paint_is_resize_ack	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^bool RenderWidget::next_paint_is_resize_ack() const {$/;"	f	class:RenderWidget
+next_paint_is_restore_ack	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^bool RenderWidget::next_paint_is_restore_ack() const {$/;"	f	class:RenderWidget
+resetInputMethod	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::resetInputMethod() {$/;"	f	class:RenderWidget
+rootWindowRect	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^WebRect RenderWidget::rootWindowRect() {$/;"	f	class:RenderWidget
+scheduleComposite	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::scheduleComposite() {$/;"	f	class:RenderWidget
+screenInfo	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^WebScreenInfo RenderWidget::screenInfo() {$/;"	f	class:RenderWidget
+setWindowRect	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::setWindowRect(const WebRect& pos) {$/;"	f	class:RenderWidget
+set_next_paint_is_repaint_ack	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::set_next_paint_is_repaint_ack() {$/;"	f	class:RenderWidget
+set_next_paint_is_resize_ack	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::set_next_paint_is_resize_ack() {$/;"	f	class:RenderWidget
+set_next_paint_is_restore_ack	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::set_next_paint_is_restore_ack() {$/;"	f	class:RenderWidget
+show	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^void RenderWidget::show(WebNavigationPolicy) {$/;"	f	class:RenderWidget
+windowRect	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^WebRect RenderWidget::windowRect() {$/;"	f	class:RenderWidget
+windowResizerRect	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^WebRect RenderWidget::windowResizerRect() {$/;"	f	class:RenderWidget
+~RenderWidget	/usr/local/google/nduca/chrome/src/chrome/renderer/render_widget.cc	/^RenderWidget::~RenderWidget() {$/;"	f	class:RenderWidget

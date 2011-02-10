@@ -1,0 +1,40 @@
+LOOSE_PASS_OWN_PTR	JavaScriptCore/wtf/PassOwnPtr.h	35;"	d
+PassOwnPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^        PassOwnPtr() : m_ptr(0) { }$/;"	f	class:WTF::PassOwnPtr
+PassOwnPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^        PassOwnPtr(PtrType ptr) : m_ptr(ptr) { }$/;"	f	class:WTF::PassOwnPtr
+PassOwnPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^        PassOwnPtr(const PassOwnPtr& o) : m_ptr(o.leakPtr()) { }$/;"	f	class:WTF::PassOwnPtr
+PassOwnPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^        explicit PassOwnPtr(PtrType ptr) : m_ptr(ptr) { }$/;"	f	class:WTF::PassOwnPtr
+PassOwnPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^        template<typename U> PassOwnPtr(const PassOwnPtr<U>& o) : m_ptr(o.leakPtr()) { }$/;"	f	class:WTF::PassOwnPtr
+PassOwnPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T> class PassOwnPtr {$/;"	c	namespace:WTF
+PtrType	JavaScriptCore/wtf/PassOwnPtr.h	/^        typedef ValueType* PtrType;$/;"	t	class:WTF::PassOwnPtr
+UnspecifiedBoolType	JavaScriptCore/wtf/PassOwnPtr.h	/^        typedef PtrType PassOwnPtr::*UnspecifiedBoolType;$/;"	t	class:WTF::PassOwnPtr::PassOwnPtr
+ValueType	JavaScriptCore/wtf/PassOwnPtr.h	/^        typedef typename RemovePointer<T>::Type ValueType;$/;"	t	class:WTF::PassOwnPtr
+WARN_UNUSED_RETURN	JavaScriptCore/wtf/PassOwnPtr.h	/^        PtrType leakPtr() const WARN_UNUSED_RETURN;$/;"	m	class:WTF::PassOwnPtr
+WTF	JavaScriptCore/wtf/PassOwnPtr.h	/^namespace WTF {$/;"	n
+WTF_PassOwnPtr_h	JavaScriptCore/wtf/PassOwnPtr.h	27;"	d
+adoptPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T> inline PassOwnPtr<T> adoptPtr(T* ptr)$/;"	f	namespace:WTF
+clear	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T> inline void PassOwnPtr<T>::clear()$/;"	f	class:WTF::PassOwnPtr
+const_pointer_cast	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline PassOwnPtr<T> const_pointer_cast(const PassOwnPtr<U>& p) $/;"	f	namespace:WTF
+get	JavaScriptCore/wtf/PassOwnPtr.h	/^        PtrType get() const { return m_ptr; }$/;"	f	class:WTF::PassOwnPtr
+getPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T> inline T* getPtr(const PassOwnPtr<T>& p)$/;"	f	namespace:WTF
+leakPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T> inline typename PassOwnPtr<T>::PtrType PassOwnPtr<T>::leakPtr() const$/;"	f	class:WTF::PassOwnPtr
+m_ptr	JavaScriptCore/wtf/PassOwnPtr.h	/^        mutable PtrType m_ptr;$/;"	m	class:WTF::PassOwnPtr
+operator !	JavaScriptCore/wtf/PassOwnPtr.h	/^        bool operator!() const { return !m_ptr; }$/;"	f	class:WTF::PassOwnPtr
+operator !=	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator!=(T* a, const PassOwnPtr<U>& b) $/;"	f	namespace:WTF
+operator !=	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator!=(const OwnPtr<T>& a, const PassOwnPtr<U>& b) $/;"	f	namespace:WTF
+operator !=	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator!=(const PassOwnPtr<T>& a, U* b)$/;"	f	namespace:WTF
+operator !=	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator!=(const PassOwnPtr<T>& a, const OwnPtr<U>& b) $/;"	f	namespace:WTF
+operator !=	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator!=(const PassOwnPtr<T>& a, const PassOwnPtr<U>& b) $/;"	f	namespace:WTF
+operator *	JavaScriptCore/wtf/PassOwnPtr.h	/^        ValueType& operator*() const { ASSERT(m_ptr); return *m_ptr; }$/;"	f	class:WTF::PassOwnPtr
+operator ->	JavaScriptCore/wtf/PassOwnPtr.h	/^        PtrType operator->() const { ASSERT(m_ptr); return m_ptr; }$/;"	f	class:WTF::PassOwnPtr
+operator =	JavaScriptCore/wtf/PassOwnPtr.h	/^        PassOwnPtr& operator=(std::nullptr_t) { clear(); return *this; }$/;"	f	class:WTF::PassOwnPtr
+operator =	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T> inline PassOwnPtr<T>& PassOwnPtr<T>::operator=(PtrType optr)$/;"	f	class:WTF::PassOwnPtr
+operator =	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T> inline PassOwnPtr<T>& PassOwnPtr<T>::operator=(const PassOwnPtr<T>& optr)$/;"	f	class:WTF::PassOwnPtr
+operator =	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T> template<typename U> inline PassOwnPtr<T>& PassOwnPtr<T>::operator=(const PassOwnPtr<U>& optr)$/;"	f	class:WTF::PassOwnPtr
+operator ==	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator==(T* a, const PassOwnPtr<U>& b) $/;"	f	namespace:WTF
+operator ==	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator==(const OwnPtr<T>& a, const PassOwnPtr<U>& b) $/;"	f	namespace:WTF
+operator ==	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator==(const PassOwnPtr<T>& a, U* b) $/;"	f	namespace:WTF
+operator ==	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator==(const PassOwnPtr<T>& a, const OwnPtr<U>& b) $/;"	f	namespace:WTF
+operator ==	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline bool operator==(const PassOwnPtr<T>& a, const PassOwnPtr<U>& b) $/;"	f	namespace:WTF
+operator UnspecifiedBoolType	JavaScriptCore/wtf/PassOwnPtr.h	/^        operator UnspecifiedBoolType() const { return m_ptr ? &PassOwnPtr::m_ptr : 0; }$/;"	f	class:WTF::PassOwnPtr
+static_pointer_cast	JavaScriptCore/wtf/PassOwnPtr.h	/^    template<typename T, typename U> inline PassOwnPtr<T> static_pointer_cast(const PassOwnPtr<U>& p) $/;"	f	namespace:WTF
+~PassOwnPtr	JavaScriptCore/wtf/PassOwnPtr.h	/^        ~PassOwnPtr() { deleteOwnedPtr(m_ptr); }$/;"	f	class:WTF::PassOwnPtr

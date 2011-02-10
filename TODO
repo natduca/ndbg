@@ -1,0 +1,208 @@
+nResolved?
+---------------------------------------------------------------------------
+- Stepping with two processes attached does not update the thread list or call stacks correctly (fixed?)
+- Hang on control-C (resolved?)
+   
+
+On tap
+---------------------------------------------------------------------------
+- Persist panels base don ui_mode
+- Persist panels on standalone windows
+- Persist panel sizing
+
+- Try redhat FasterGdbStartUp
+
+- Need status dialog when attaching to a process via dpassiveprocess.attach()
+
+- Hitting breakpoint not reliably selecting active thread with multiple processes [chrome dbg]
+
+
+
+- Way to find source when not found
+
+
+- Attach to chrome's inspector remote debugging host if possible
+   http://code.google.com/p/chromedevtools/wiki/ChromeDevToolsProtocol
+
+- Attach gets wrong compilation directory becasue it uses the current frame --- it needs to use the executable  [probably should be using compilation directories of all objects we load, eg symbol-loaded flag]
+
+- Put explanation in output window when debugging but there are no ttys reminding why [your processes have ttys externally] 
+
+- Use popen for RemoteClass so it doesn't recv KeyboardInterrupts
+
+- Implement marks in emacs
+- Polish on output tab for multiprocess case [ merged tty? ]
+- Wierd emacs bugs where it doesn't focus correct line [ ndbg -e test/test2 seems to work in timeout case ]
+
+- Alt-O feature
+- Opening file should put it on the frame without changing current window [if possible]
+
+- Handle processes that die unexpectedly
+- Handle processes that fail to launch
+
+- Switch from using compilation directory to seed the compilation directory to using the compilation directory for individual frames
+- Warning when continuing/step/next/etc when executable is out of date  (butterbar, but red)
+
+- Are frames on non-active thread marked? They shoudln't be for performance reasons, possibly
+- Optimize retrieval of stack frames when the debugger stops/pauses -- doing too much work on non-active threads to update thread tab
+
+- Focus output tab when attaching, launching process
+- Try to not reload symbols for executables that haven't changed [keep backends alive, remember the mtime on their executable?]
+
+- Move python and interactive tabs to a readline mode or SOMETHING so they have fwd/back prev/next and completion
+
+- When launching_process and suspend is false, supress focusing of the main function
+
+- Emacs mode should add in ctl-n and ctl-p as ways to move quickoepn up and down
+- left-right tweaks on Quickopen  should be available in the other quickdialog
+
+- Double clicking woes continue
+- Enter on quickopen dialog does not work when textentry isn't selected
+
+- Show error in breakpoint tab when has one
+
+- When ending debugging, active source file should not be changed
+
+- Forcibly rebuild tags on a file if its mtime has changed
+- Automatically re-explore directory when it its contents are known to have changed
+
+- New window option
+- When you run without debugging it should say "runnign but not debugging" and a "interrupt and attach option" should exist
+
+- ProgDB find file: If we get no hit on the basename search, then start looking at absolute names (eg internals/index.html) 
+- ProgDB: quick fid dialog --- take exact matches and put them at the top of the hit list rather than sorting them in the middle
+
+- Create a some_break pixmap
+- Use a some_break and error_break pixmap in editor
+
+- UI becomes unresponsive during load of a process
+
+
+
+- UI to modify maincontrol._prev_launch_str
+
+- As files are opened in browser, add them to the filemanager search path. [and progdb]
+- Take code for progdb that maintains file search paths to always be supersets and have that in file manager as well
+- Ensure filemanager doesn't get confused by symlinks
+
+- Shrink font on output window tty; increase history on tty to be a LOT longer; add a pop-out button so it can be popped out to a big window
+
+- Cancel button on load symbols dialog? [Kill the backend...]
+
+- Quickopen: pressing enter while a query is pendign should wait for the query to return then use the resulting selection
+
+- Better warning when an app fails to launc [always have output window available?]
+
+- Hide the menu bar until ALT is pressed or mouse is near top of window
+
+Architecture
+---------------------------------------------------------------------------
+- Make the message loop not suck cycles when no callback is enqueued
+- Make Waitable.when_exception and tie it up to MC attaching to invalid pid or nonexistent executable
+
+- Tests should NOT load ~/.ndbg; settings should get cloned so we preserve add state but reset temp values across runs
+
+- Add sorting logic to mainwindowoverlay menu items so we can control where items appear in list
+
+- Make interactive mode work at not-debugging mode [limited]
+- Rewrite the begin_interpreter_exec to use new-style waitables
+
+- Control C when a gtk.dialog is up doesn't stop program
+
+Breakpoint tab
+---------------------------------------------------------------------------
+ - Breakpoint should show requested text, rather than reported address [reporeted should be in TT]
+ - show breakpoint setting errors in tooltips
+ - Implement enable/disable
+ - Run-to-current (tbrk)
+
+ - Move breakpoints when things are edited
+
+
+EditorBase
+---------------------------------------------------------------------------
+- Disassembly view when no source found
+
+- Create a some_break pixmap. Make variants for those use in editor as well, e.g. cur and active
+
+- Write editor_base unit tests
+
+- Quick find dialog: Sort file hits by directory distance to the currently selected files
+- Right click on file in quickopen and pick "ignore <extension>" and it will get added to extension
+
+
+ProgDB
+---------------------------------------------------------------------------
+- Make GotoMethoDialog use asyncrequest
+- Replace GotoMethodDialog with a GotoMethodPopup
+
+- Symbol browsing using dwarf
+
+
+EmacsEditor
+---------------------------------------------------------------------------
+- Lingering focus issues with emacs
+- Use overlay-arrow for current line
+
+
+Watch/interactive window
+---------------------------------------------------------------------------
+- "Watch" window"? Determine interaction with pretty printers
+
+
+Output window
+---------------------------------------------------------------------------
+- Have a gdb/innards output tty
+
+- Oscilloscope mode --- lock on to a regular queue and always clear the tty
+- Send output to some other computer [pad/etc]
+
+Debugger
+---------------------------------------------------------------------------
+- Implement the _not_implemented interactive commands
+
+- Skip functions of specified names when stepping [e.g. step through ->'s, width(), etc calls]
+
+- Follow forks [via breakpoint on fork, replace with clone?]
+
+
+SourceViewEditor
+- Close source tab hotkey [control w]
+- Control-L to center the cursor onscreen
+
+
+
+Other
+---------------------------------------------------------------------------
+- Step through this entire method, logging all function arguments
+  Allow viewing of call history after-the-fact [and eventually diffing]
+- Tasks that are enqueued; tasks that are running
+
+- Copy & paste of sub-rows in watch expression
+- Complex visualizers [gui for exploring the render tree] [right in the c++ code?]
+
+- Remote debugging
+
+
+- Cross-step
+- Tracing [task debugging]
+
+- Support for non-C++ backend?
+
+
+- Unicode and prettyprinters?
+
+
+StackExplorer
+---------------------------------------------------------------------------
+- Deal with really big graphs
+- Support for edges to self
+- Clearing of current graph, having different graphs based on start point
+- Saving the current graph as DOT
+- "Explore upward" mode
+- "Explore out of this function" mode
+
+- When exploring, stop UI from updating for improved performance
+
+
+

@@ -1,0 +1,11 @@
+test1
+test2
+test_threads
+test_multiproc
+test_template
+test_shared
+test_exit
+test_fw
+*.so
+*.o
+.*.sw?
