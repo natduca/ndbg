@@ -14,6 +14,7 @@ class AsyncV8IO(object):
     self._found_header = False
     self._cur_header = ""
     self._cur_body = ""
+    self._cur_headers = None
 
   def v8_request(self, command, args):
     this_seq = self._next_seq
@@ -35,7 +36,6 @@ class AsyncV8IO(object):
     self._io.write(header + text)
 
   def _on_read(self, data):
-    print "read %s" % data
     if not self._found_header:
       self._cur_header += data
       idx = self._cur_header.find("\r\n\r\n")
@@ -43,13 +43,14 @@ class AsyncV8IO(object):
         print "header found"
         self._found_header = True
         body = self._cur_header[idx+4:]
-        self._cur_header = self._cur_header[:idx]
-        lines = self._cur_header.split("\r\n")
+        headers = self._cur_header[:idx]
+        self._cur_header = ''
+        lines = headers.split("\r\n")
         if lines[-1] == '':
           del lines[-1]
         arys = [[y.strip() for y in x.split(':')] for x in lines]
-        d = dict([x[0] for x in arys], [x[1] for x in arys])
-        print d
+        d = dict(arys)
+        self._cur_headers = d
         if not d.has_key("Content-Length"):
           self._io.close()
           raise Exception("Malformed header")
@@ -59,11 +60,24 @@ class AsyncV8IO(object):
       self._cur_body += data
       if len(self._cur_body) >= self._content_length_goal:
         remainder = self._cur_body[self._content_length_goal:]
-        self._cur_body = self._cur_body[:self._content_length_goal]
+        body = self._cur_body[:self._content_length_goal]
+        self._cur_body = ''
+
+        d = self._cur_headers
+        self._cur_headers = None
+
+        self._found_header = False
+
         # body recvd
-        print "response: [%s]" % self._cur_body
+        self._on_response(d, body)
+
+        # more?
         if len(remainder):
           self._on_read(remainder)
+
+  def _on_response(self, headers, body):
+    print "h=", headers
+    print "b=", body
 
   def _on_close(self):
     self._io = None
@@ -75,7 +89,7 @@ class V8Backend(object):
     self._do_handshake(s)
     self._io = AsyncV8IO(s)
     self._io.general_request({"command" : "ping"})
-    self._io.general_request({"command" : "ping"})
+    self._io.general_request({"command" : "list_tabs"})
 
   def _do_handshake(self,s):
     i = "ChromeDevToolsHandshake"
