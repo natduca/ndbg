@@ -1,21 +1,6 @@
-import socket
 from util import *
-from cStringIO import StringIO
 
-class AsyncV8IO(object):
-  def __init__(self, s):
-    self._next_seq = 0
-    self._io = AsyncIO()
-
-    self._io.read.add_listener(self._on_read)
-    self._io.close.add_listener(self._on_close)
-    self._io.open(s)
-
-    self._found_header = False
-    self._cur_header = ""
-    self._cur_body = ""
-    self._cur_headers = None
-
+class V8Backend(object):
   def v8_request(self, command, args):
     this_seq = self._next_seq
     self._next_seq += 1
@@ -25,71 +10,28 @@ class AsyncV8IO(object):
         "command" : command,
         "arguments" : args
         })
-
-  def general_request(self, args):
     text = pson.dumps(args)
-    header = ""
-    header += "Tool:DevToolsService\r\n"
-    header += "Content-Length:%i\r\n" % (len(text))
-    header += "\r\n"
-    print "send[%s]" % (header + text)
-    self._io.write(header + text)
+    self.general_request("V8Debugger", cmd)
 
-  def _on_read(self, data):
-    if not self._found_header:
-      self._cur_header += data
-      idx = self._cur_header.find("\r\n\r\n")
-      if idx:
-        print "header found"
-        self._found_header = True
-        body = self._cur_header[idx+4:]
-        headers = self._cur_header[:idx]
-        self._cur_header = ''
-        lines = headers.split("\r\n")
-        if lines[-1] == '':
-          del lines[-1]
-        arys = [[y.strip() for y in x.split(':')] for x in lines]
-        d = dict(arys)
-        self._cur_headers = d
-        if not d.has_key("Content-Length"):
-          self._io.close()
-          raise Exception("Malformed header")
-        self._content_length_goal  = int(d["Content-Length"])
-        self._on_read(body)
-    else:
-      self._cur_body += data
-      if len(self._cur_body) >= self._content_length_goal:
-        remainder = self._cur_body[self._content_length_goal:]
-        body = self._cur_body[:self._content_length_goal]
-        self._cur_body = ''
+  def general_request(self, tool, args, cb = None):
+    if not args:
+      args = {}
+    def pass_cb(h,resp):
+      print "%s\n%s\n\n" % (h, resp)
+      if cb:
+        cb(resp)
+    self._session.request({"Tool":tool}, pson.dumps(args), pass_cb)
 
-        d = self._cur_headers
-        self._cur_headers = None
-
-        self._found_header = False
-
-        # body recvd
-        self._on_response(d, body)
-
-        # more?
-        if len(remainder):
-          self._on_read(remainder)
-
-  def _on_response(self, headers, body):
-    print "h=", headers
-    print "b=", body
-
-  def _on_close(self):
-    self._io = None
-
-class V8Backend(object):
   def __init__(self, host, port):
+    self._next_seq = 0
+
     s = socket.socket()
     s.connect((host, port))
     self._do_handshake(s)
-    self._io = AsyncV8IO(s)
-    self._io.general_request({"command" : "ping"})
-    self._io.general_request({"command" : "list_tabs"})
+
+    self._session = AsyncHTTPSession(s)
+    self.general_request("DevToolsService", {"command": "ping"})
+    self.general_request("DevToolsService", {"command": "tabs"})
 
   def _do_handshake(self,s):
     i = "ChromeDevToolsHandshake"
