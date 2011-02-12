@@ -47,7 +47,7 @@ class _AsyncIODispatcher(asyncore.dispatcher):
     self._pending_sends = []
 
   def handle_read(self, *args):
-    print "recv: ", args
+#    print "recv: ", args
     buffer = self.recv(8192)
     MessageLoop.add_message(lambda: self._handle._read.fire(buffer))
 
@@ -62,9 +62,9 @@ class _AsyncIODispatcher(asyncore.dispatcher):
 
   def handle_write(self):
     if len(self._pending_sends):
-      print "sending queue has an %i byte send" % len(self._pending_sends[0].data)
+#      print "sending queue has an %i byte send" % len(self._pending_sends[0].data)
       sent = self.send(self._pending_sends[0].data)
-      print "%i sent" % sent
+#      print "%i sent" % sent
       self._pending_sends[0].data = self._pending_sends[0].data[sent:]
       if len(self._pending_sends[0].data) == 0:
         MessageLoop.add_message(self._pending_sends[0].cb)

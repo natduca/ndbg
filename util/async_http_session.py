@@ -27,7 +27,7 @@ class AsyncHTTPSession(object):
     header = "\r\n".join(["%s:%s" % (x, headers[x]) for x in headers])
     header += "\r\nContent-Length:%i\r\n" % (len(text))
     header += "\r\n"
-    print "send[%s]" % (header + text)
+#    print "send[%s]" % (header + text)
     self._pending_request_cbs.append(cb)
     self._io.write(header + text)
 
@@ -36,7 +36,7 @@ class AsyncHTTPSession(object):
       self._cur_header += data
       idx = self._cur_header.find("\r\n\r\n")
       if idx:
-        print "header found"
+#        print "header found"
         self._found_header = True
         body = self._cur_header[idx+4:]
         headers = self._cur_header[:idx]
