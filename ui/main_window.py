@@ -92,6 +92,7 @@ class TabPanel(gtk.Notebook):
     self.append_page(tab,l)
     self.set_tab_reorderable(tab,True)
     self.set_tab_detachable(tab,True)
+    self.update_visibility()
 
   def remove_tab(self,tab):
     if tab.get_parent() != this:
@@ -101,6 +102,7 @@ class TabPanel(gtk.Notebook):
         tab.remove_page(i)
         break
     del self._mw._tab_owner_overlays[tab]
+    self.update_visibility()
 
 def _is_child_of(w,parent):
   cur = w
