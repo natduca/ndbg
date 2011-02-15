@@ -15,8 +15,6 @@ On tap
 
 - Need status dialog when attaching to a process via dpassiveprocess.attach()
 
-- Marks not cleared when ending debugging
-
 - Long delay when breakpoint is hit in chrome
 
 

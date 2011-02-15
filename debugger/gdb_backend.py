@@ -1014,6 +1014,7 @@ class GdbBackend(DebuggerBackend):
       log0("Process kill succeeded but no exited threads found. Non-critical but strange.")
 
     # get rid of backend on the process
+    log2("After kill, beginning to remove process %s" % proc)
     proc = self._exited_process
     backend_info = proc.backend_info
     be_id = proc.backend_id
@@ -1021,11 +1022,10 @@ class GdbBackend(DebuggerBackend):
 
     assert proc in self._processes
     self._exited_process = None
-    self._processes.remove_key(be_id)
 
     # remove threads
     for thr in self._exited_threads:
-      print "Removing thread %s" % thr
+      log2("After kill, removing thread %s" % thr)
       thr._process = None
       thr._fire_changed()
       proc.threads.remove(thr)
@@ -1033,8 +1033,9 @@ class GdbBackend(DebuggerBackend):
     self._exited_threads = []
 
     # remove pty, remove the process itself
-    log2("Removing process %s" % proc)
+    log2("After kill, cleaning up process %s" % proc)
     assert len(proc.threads) == 0
+    self._processes.remove_key(be_id)
 
     if proc.pty:
       self._ptys.remove(proc.pty)

@@ -472,12 +472,20 @@ class MainControl(dbus.service.Object):
     if len(debugger.processes):
       assert len(debugger.processes) != 0
       assert debugger.first_added_process != None
-      first_name = os.path.basename(debugger.first_added_process.target_exe)
-      n_others = len(debugger.processes) - 1
+      first_valid_name = None
+      n_others = 0
+      for proc in debugger.processes:
+        if proc.backend_info:
+          if not first_valid_name:
+            first_valid_name = os.path.basename(proc.target_exe)
+          else:
+            n_others += 1
       if n_others > 0:
-        name = "%s (+%i more)" % (first_name, n_others)
+        name = "%s (+%i more)" % (first_valid_name, n_others)
+      elif first_valid_name:
+        name = first_valid_name
       else:
-        name = first_name
+        name = None
     else:
       if self._primary_executable:
         app = self._primary_executable[0]
