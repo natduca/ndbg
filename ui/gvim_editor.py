@@ -32,7 +32,7 @@ class GVimEditor(EditorBase):
 
     mc.settings.register("GVimEditorFirstRun", bool, True)
     if mc.settings.GVimEditorFirstRun:
-      mc.settings.GVimEditorFirstRun = True
+      mc.settings.GVimEditorFirstRun = False
       b = ButterBar("nDBG's GVim mode has a few quirks that you might want to know about...")
       b.set_stock_icon(gtk.STOCK_DIALOG_INFO)
       b.add_button("Tell me more...", self._on_more_gvim_information)

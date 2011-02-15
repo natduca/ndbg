@@ -41,7 +41,7 @@ class EmacsEditor(EditorBase):
 
     mc.settings.register("EmacsEditorFirstRun", bool, True)
     if mc.settings.EmacsEditorFirstRun:
-      mc.settings.EmacsEditorFirstRun = True
+      mc.settings.EmacsEditorFirstRun = False
       b = ButterBar("nDBG's emacs mode has a few quirks that you might want to know about...")
       b.set_stock_icon(gtk.STOCK_DIALOG_INFO)
       b.add_button("Tell me more...", self._on_more_emacs_information)
