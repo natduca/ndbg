@@ -8,6 +8,7 @@ On tap
 ---------------------------------------------------------------------------
 - Fix bugs in sizing persistence and magical disappearing panels
 - Persist panels on standalone windows
+- Ctrl-x control-c of editor when running raises an exception
 
 - Hang when process fails to launch. No explanation of what failed.
   - Rename Waitable to Task. Make passing an error cb mandatory to all tasks
