@@ -47,14 +47,13 @@
 ;;    (message (format "ndbg-set-image-at-line %s %s" img line))
     (set-marker-insertion-type m nil) ;; keep the marker from moving during edits
     (put-image img m nil 'left-margin)
-    (puthash  line m ndbg-currently-set-lines)))
+    (puthash  line 1 ndbg-currently-set-lines)))
 
 (defun ndbg-remove-image-at-line (line)
   (ndbg-ensure-buffer-initialized)
   (unless (gethash line ndbg-currently-set-lines)
     (throw 'line-not-marked))
-  (let* ((m (gethash line ndbg-currently-set-lines))
-         (pos (marker-position m)))
+  (let* ((pos (ndbg-get-line-start-pos line)))
     (remove-images pos pos)
     (remhash line ndbg-currently-set-lines)
     ))
