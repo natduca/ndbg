@@ -299,6 +299,7 @@ As a nDBG user, you have two options:
     tmp_file.close()
     res = self.remote_eval("""(load "%s" nil t t)""" % tmp_file.name)
     del self._pending_cmds[:]
+    os.unlink(tmp_file.name)
 
   def remote_run_ary(self,args,silent=False):
     log2("Launching %s", args)
