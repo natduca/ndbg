@@ -307,7 +307,7 @@ class MainWindow(gtk.Window):
     self._settings.register("SplitterSizes", dict, {})
 
     # add listeners
-    self.connect('size-allocate', self._window_size_chagned)
+    self.connect('size-allocate', self._window_size_changed)
     for splitter in self._splitters:
       splitter.connect('notify::position', self._splitter_changed)
 
@@ -315,7 +315,7 @@ class MainWindow(gtk.Window):
     self._splitter_size_set_needed = True
 
 
-  def _window_size_chagned(self, *args):
+  def _window_size_changed(self, *args):
     if self._layout_changing:
       return
     if self._splitter_size_set_needed:
