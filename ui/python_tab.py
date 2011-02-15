@@ -11,11 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from nconsole import *
 import codeop
 import sys
-from tab_interface import *
 import traceback
+from tab_interface import *
+from nconsole import *
+from util import *
 
 class PythonTab(NConsole):
   def __init__(self, mc):
@@ -32,7 +33,8 @@ class PythonTab(NConsole):
                      'mc' : mc,
                      'debugger' : mc.debugger,
                      'editor' : mc.editor,
-                     'filemanager' : mc.filemanager
+                     'filemanager' : mc.filemanager,
+                     'set_loglevel' : set_loglevel
                      }
 
     self._old_displayhook = sys.displayhook
