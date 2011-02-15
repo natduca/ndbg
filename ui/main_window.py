@@ -364,6 +364,9 @@ class MainWindow(gtk.Window):
       if splitter_sizes[self._layout].has_key(splitter.id) and splitter.get_position() != splitter_sizes[self._layout][splitter.id]:
         print "%s: save %s<-%s" % (self._layout, splitter.id, splitter.get_position())
         needs_commit = True
+      elif not splitter_sizes[self._layout].has_key(splitter.id):
+        print "%s: save %s<-%s" % (self._layout, splitter.id, splitter.get_position())
+        needs_commit = True
 #      import pdb; pdb.set_trace()
       splitter_sizes[self._layout][splitter.id] = splitter.get_position()
     if needs_commit:
