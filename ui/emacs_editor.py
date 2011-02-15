@@ -349,21 +349,23 @@ As a nDBG user, you have two options:
       self.push_remote_cmd(s)
 
   def set_line_mark_states(self, file_handle, added, changed, removed):
+    if len(added) + len(changed) + len(removed) == 0:
+      return
+
     cmds = []
-    cmds += ["""(with-current-buffer (find-file-noselect "%s")""" % file_handle.absolute_name]
+    abs_name = file_handle.absolute_name
     r = self._mc.resources
     def x(s):
       return "ndbg-%s-image" % s.get_mark_resource(r).el_name
     for l in removed:
-      cmds += ['(ndbg-remove-image-at-line %i)' % l]
+      cmds += ['  (ndbg-remove-mark "%s" %i)' % (abs_name, l)]
     for l in changed:
       m = changed[l]
-      cmds += ['(ndbg-remove-image-at-line %i)' % l]
-      cmds += ['(ndbg-set-image-at-line %s %i)' % (x(m), l)]
+      cmds += ['  (ndbg-remove-mark "%s" %i)' % (abs_name, l)]
+      cmds += ['  (ndbg-add-mark %s "%s" %i)' % (x(m), abs_name, l)]
     for l in added:
       m = added[l]
-      cmds += ['(ndbg-set-image-at-line %s %i)' % (x(m), l)]
-    cmds += ')'
+      cmds += ['  (ndbg-add-mark %s "%s" %i)' % (x(m), abs_name, l)]
     self.push_remote_cmd("\n".join(cmds))
 
 
