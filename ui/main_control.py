@@ -218,7 +218,7 @@ class MainControl(dbus.service.Object):
           self._run_primary_executable(suspended)
         b.add_button("Re-run program", on_restart)
         b.add_close_button()
-        self._butter_bar_collection.add_bar(b)
+        self.butter_bar_collection.add_bar(b)
 
       self._primary_executable = dlg.primary_executable
       self._on_status_changed()
