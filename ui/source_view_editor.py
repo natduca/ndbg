@@ -43,7 +43,6 @@ class SourceViewEditor(EditorBase):
     EditorBase.__init__(self, mc)
     self._notebook = gtk.Notebook()
     self._notebook.set_tab_pos(gtk.POS_TOP)
-    self._notebook.set_size_request(1000,400)
     self._tabs_with_files_that_exist = {}
 
     # control 1 thru 9 modifiers

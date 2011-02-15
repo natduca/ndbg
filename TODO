@@ -17,11 +17,11 @@ On tap
 
 - Long delay when breakpoint is hit in chrome
 
+- Show reason we stopped somewhere... [interactive tab, butter bar, ...]
+
+- Support Ctl-N Ctl-P in NConsole if emacs editor is bound
 
 - Way to find source when not found
-
-- When setting marks, dont open files if they're not open
-- When opening file, apply marks to it
 
 - When quickopening files that have changed with emacs, qo dialog hangs because emacs is prompting whether to revert
 

@@ -50,7 +50,6 @@ class GVimEditor(EditorBase):
         # focus the socket
         ed._socket.child_focus(gtk.DIR_TAB_FORWARD)
     self._ebox = MyEBox()
-    self._ebox.set_size_request(750,400)
 
     self._socket = gtk.Socket()
     self._ebox.add(self._socket)

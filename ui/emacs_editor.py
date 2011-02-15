@@ -237,7 +237,6 @@ As a nDBG user, you have two options:
 
     # emacs doesn't seem to listen to the first size that we give it, leaving it too small for a minute...
     # this hack basically waits a little bit before we see
-    self._ebox.set_size_request(750,400)
 
     # focus us and get going
     self._install_mw_hooks_to_handle_emacs_suckage()

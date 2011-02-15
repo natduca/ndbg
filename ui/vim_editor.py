@@ -28,7 +28,6 @@ class VimEditor(EditorBase):
     self._mc = mc
 
     self._vbox = gtk.VBox()
-    self._vbox.set_size_request(750,400)
 
     pty_fds = pty.openpty()
     self._pty_fds = pty_fds

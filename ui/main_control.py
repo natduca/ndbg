@@ -78,7 +78,6 @@ class MainControl(dbus.service.Object):
     self._settings = settings
     self._mw = mw
 
-
     self._registered_process = RegisteredProcess()
     dbus.service.Object.__init__(self, dbus.SessionBus(), "/MainControl")
 
