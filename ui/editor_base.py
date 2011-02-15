@@ -147,7 +147,7 @@ class EditorBase(object):
   def _on_active_frame_changed(self):
     # focus the active location
     if self._mc.debugger.active_thread: # we probably just went from running to break...
-      log2("Active frame changed");
+      log2("Active frame changed. Active thread is %s", self._mc.debugger.active_thread);
       fn = self._mc.debugger.active_thread.active_frame_number
       cs = self._mc.debugger.active_thread.call_stack
       self.focus_location(cs[fn].location)
