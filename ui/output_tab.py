@@ -39,9 +39,12 @@ class OutputTab(gtk.VBox):
     cbox.connect('changed', self._on_active_pty_changed)
 
     # term box
-    term_box = gtk.VBox()
+    term_box = gtk.ScrolledWindow()
+    term_box.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
     self._term_box = term_box
+
     self.pack_start(term_box,True,True,0)
+
     self.show_all()
 
     # connect up to debugger...
@@ -124,7 +127,7 @@ class OutputTab(gtk.VBox):
     # make the new pty active
     if self._active_pty:
       r = self._ls.find(lambda r: r.Pty == pty)
-      self._term_box.pack_start(r.Term,True,True,0)
+      self._term_box.add(r.Term)
       self.show_all()
 
   # not sure what this shit does
