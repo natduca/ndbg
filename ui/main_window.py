@@ -333,7 +333,7 @@ class MainWindow(gtk.Window):
       return
     if self._splitter_size_set_needed:
       self._update_splitter_sizes()
-      self._splitter_size_set_needed = False
+      self._splitter_size_set_needed = False 
     self._save_sizes()
 
   def _splitter_changed(self, splitter, param):
@@ -344,6 +344,7 @@ class MainWindow(gtk.Window):
   def _update_splitter_sizes(self):
     if self._layout == None:
       return
+    print "MW: Splitter layout updating"
     self._layout_changing = True
     splitter_sizes =  self._settings.SplitterSizes
     for splitter in self._splitters:
@@ -359,9 +360,11 @@ class MainWindow(gtk.Window):
           self._pane_configure_default_cbs[splitter.id]()
 
     def stop_ignoring_changes():
+#      import pdb; pdb.set_trace()
+      assert self._pending_stop_ignoring_changes_message
       self._pending_stop_ignoring_changes_message = None
       self._layout_changing = False
-      print "MW: Layout change completely done"
+      print "MW: Splitter layout completely done"
     if self._pending_stop_ignoring_changes_message:
       self._pending_stop_ignoring_changes_message.cancel()
     self._pending_stop_ignoring_changes_message = MessageLoop.add_cancellable_delayed_message(stop_ignoring_changes, 30)
@@ -374,10 +377,11 @@ class MainWindow(gtk.Window):
       return
 
     size = self.get_allocation()
-    newSize = {"width" : size.width, "height" : size.height}
-    if pson.dumps(newSize) != pson.dumps(self._settings.WindowSize):
-#      print "window size changed"
-      self._settings.WindowSize = newSize
+    if self.get_window().get_state() & (gtk.gdk.WINDOW_STATE_MAXIMIZED | gtk.gdk.WINDOW_STATE_ICONIFIED) == 0:
+      newSize = {"width" : size.width, "height" : size.height}
+      if pson.dumps(newSize) != pson.dumps(self._settings.WindowSize):
+#        print "window size changed"
+        self._settings.WindowSize = newSize
 
     import copy
     splitter_sizes = copy.deepcopy(self._settings.SplitterSizes)
@@ -406,4 +410,4 @@ class MainWindow(gtk.Window):
     self._layout = layout
     MainWindowOverlay.set_layout(self._settings, self, layout)
     self._update_splitter_sizes()
-    print "MW: Layout change mostly done"
+    print "MW: Layout change done. Splitter change pending."
