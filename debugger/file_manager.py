@@ -119,6 +119,8 @@ class FileManager(object):
     for d in dirs:
       self._file_search_path.add(d)
 
+    self._locate_missing_files()
+
   @property
   def search_paths(self):
     return list(self._file_search_path)
@@ -127,7 +129,56 @@ class FileManager(object):
     path = os.path.realpath(path)
     self._file_search_path.add(path)
     self._progdb.call_async.add_search_path(path)
-    # todo, do we get rid of existing file handles?
+    self._locate_missing_files()
+
+  def _locate_missing_files(self):
+    nonexistant_fhs = [fh for fh in self._files_by_alias.values() if not fh.exists]
+    for fh in nonexistant_fhs:
+      self._update_fh_if_file_exists(fh)
+
+  def _update_fh_if_file_exists(self,fh):
+    assert len(fh.aliases) == 1
+    requested_filename = fh.aliases[0]
+    for b in self._file_search_path:
+      candiate_resolved = os.path.join(b, requested_filename)
+      try:
+        f = open(candiate_resolved,"r")
+        log2("LocateMissing: %s->%s", requested_filename, candiate_resolved)
+        f.close()
+
+        # make it absolute...
+        candiate_resolved = os.path.realpath(candiate_resolved)
+
+        # if the file was resolved already under a different alias,
+        # this FH is stale and basically shoud go away
+        if self._files_by_absolute_name.has_key(candiate_resolved):
+          log1("LocateMissing: resolved to existing fh. Forgetting original alias.")
+          existing_fh = self._files_by_absolute_name[candiate_resolved]
+
+          # add the fh's alias to the existing fh's alias list
+          if requested_filename not in existing_fh._aliases:
+            existing_fh._aliases.append(requested_filename)
+
+          # poitn the fh's alias at the existing fh
+          self._files_by_alias[requested_filename] = existing_fh
+
+          # fix up the FH... its orphaned so it will die, but it should
+          # at least be correct
+          fh._absolute_name = candiate_resolved
+
+        # otherwise, we have a file that has been resolved for the
+        # first time update the handle with the absolute filename
+        # and add handle to the absolute map
+        else:
+          log1("LocateMissing: FH is freshly resolved") 
+          fh._absolute_name = os.path.realpath(candiate_resolved)
+          self._files_by_absolute_name[fh._absolute_name] = fh
+
+        return
+      except exceptions.IOError:
+        log2("LocateMissing: tried %s", candiate_resolved)
+        pass
+    log2("LocateMissing: wasn't able to resolve.")
 
   def find_file(self,requested_filename):
     # check files by absolute
