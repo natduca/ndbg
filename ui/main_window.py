@@ -367,7 +367,7 @@ class MainWindow(gtk.Window):
       print "MW: Splitter layout completely done"
     if self._pending_stop_ignoring_changes_message:
       self._pending_stop_ignoring_changes_message.cancel()
-    self._pending_stop_ignoring_changes_message = MessageLoop.add_cancellable_delayed_message(stop_ignoring_changes, 30)
+    self._pending_stop_ignoring_changes_message = MessageLoop.add_cancellable_delayed_message(stop_ignoring_changes, 250)
     
   def _save_sizes(self):
 #    import traceback
