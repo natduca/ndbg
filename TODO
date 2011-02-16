@@ -6,33 +6,35 @@ nResolved?
 
 On tap
 ---------------------------------------------------------------------------
-- Persist panels base don ui_mode
+- Fix bugs in sizing persistence and magical disappearing panels
 - Persist panels on standalone windows
-- Persist panel sizing
+- Ctrl-x control-c of editor when running raises an exception
 
-- Try redhat FasterGdbStartUp
+- Hang when process fails to launch. No explanation of what failed.
+  - Rename Waitable to Task. Make passing an error cb mandatory to all tasks
 
 - Need status dialog when attaching to a process via dpassiveprocess.attach()
 
-- Hitting breakpoint not reliably selecting active thread with multiple processes [chrome dbg]
+- Long delay when breakpoint is hit in chrome
 
+- Show reason we stopped somewhere... [interactive tab, butter bar, ...]
 
+- Support Ctl-N Ctl-P in NConsole if emacs editor is bound
 
 - Way to find source when not found
 
+- When quickopening files that have changed with emacs, qo dialog hangs because emacs is prompting whether to revert
+
+- Hitting breakpoint not reliably selecting active thread with multiple processes [chrome dbg]
 
 - Attach to chrome's inspector remote debugging host if possible
    http://code.google.com/p/chromedevtools/wiki/ChromeDevToolsProtocol
 
-- Attach gets wrong compilation directory becasue it uses the current frame --- it needs to use the executable  [probably should be using compilation directories of all objects we load, eg symbol-loaded flag]
-
 - Put explanation in output window when debugging but there are no ttys reminding why [your processes have ttys externally] 
 
-- Use popen for RemoteClass so it doesn't recv KeyboardInterrupts
+- Make it so RemoteClass doesn't use Multiprocessing [completely seal it behind a socket]
 
-- Implement marks in emacs
 - Polish on output tab for multiprocess case [ merged tty? ]
-- Wierd emacs bugs where it doesn't focus correct line [ ndbg -e test/test2 seems to work in timeout case ]
 
 - Alt-O feature
 - Opening file should put it on the frame without changing current window [if possible]

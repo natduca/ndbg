@@ -36,14 +36,25 @@ class MainWindowOverlay(object):
     log1("Updating prefs for layout %s", layout)
     import copy
     tab_panels = copy.deepcopy(settings.TabPanelAssignments)
+    needs_commit = False
     for ovl in mw.overlays:
       for tab in ovl._tabs:
         panel = tab.get_parent()
         if panel and panel.get_property('visible'):
           if not tab_panels.has_key(layout):
             tab_panels[layout] = {}
+            needs_commit = True
+          if not tab_panels[layout].has_key(tab.id):
+            needs_commit = True
+          else:
+            if tab_panels[layout][tab.id] != panel.id:
+              needs_commit = True
+              
+          if needs_commit:
+            log2("%s: %s parent = %s",layout, tab.id, panel.id)
           tab_panels[layout][tab.id] = panel.id
-    settings.TabPanelAssignments = tab_panels
+    if needs_commit:
+      settings.TabPanelAssignments = tab_panels
 
   @staticmethod
   def set_layout(settings, mw, layout):
@@ -262,14 +273,21 @@ class MainWindowOverlay(object):
           panel_id = self._settings.TabPanelAssignments[self._layout][tab_id]
           if self._mw.panels.has_key(panel_id):
             panel = self._mw.panels[panel_id]
+#            print "%s: tab %s using panel from settings %s" % (self._layout, tab_id, panel.id)          
           else:
             log0("Unrecognized panel in setting: %s" % panel_id)
+        else:
+#          print "%s: tab %s using default panel assignment %s (no specific assignment)" % (self._layout, tab_id, panel.id)          
+          pass
+      else:
+#        print "%s: tab %s using default panel assignment %s (no layout)" % (self._layout, tab_id, panel.id)
+        pass
 
       panel.add_tab(tab,resource.title, self)
     def detach():
-      p = tab.get_parent()
-      assert isinstance(p, TabPanel)
-      p.remove_tab(tab)
+      panel = tab.get_parent()
+      assert isinstance(panel, TabPanel)
+      panel.remove_tab(tab)
     def show():
       tab.show_all()
       tab.get_parent().update_visibility()

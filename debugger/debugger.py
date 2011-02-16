@@ -121,7 +121,7 @@ class Debugger(DebuggerBase):
       return # delete backend only on shutdown of the debugger
     else:
       # delete the backend if it has no more processes and isn't the last backend
-      if self._backends > 1 and len(backend.processes) == 0:
+      if self._backends > 1 and len(backend.processes) == 0 and len(backend.threads) == 0:
         log1("Debugger: Shutting down backend")
         rebind_breakpoints = self._temporarily_unbind_all_breakpoints()
         backend.shutdown(force=True)
@@ -450,10 +450,12 @@ class Debugger(DebuggerBase):
       for thr in remaining_threads:
         # just pick another thread... in future, try to pick one from this process...
         if thr.process and thr.process.backend_info: # pick one that is alive
+          log2("Switchign active thread to %s", thr)
           self.active_thread = thr
           found = True
+          break
         else:
-          log2("Can't use thread %s, its process is dead too.")
+          log2("Can't use thread %s, its process is dead too.", thr)
         
       if not found:
         log2("Setting active thread to None")

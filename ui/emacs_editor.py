@@ -41,7 +41,7 @@ class EmacsEditor(EditorBase):
 
     mc.settings.register("EmacsEditorFirstRun", bool, True)
     if mc.settings.EmacsEditorFirstRun:
-      mc.settings.EmacsEditorFirstRun = True
+      mc.settings.EmacsEditorFirstRun = False
       b = ButterBar("nDBG's emacs mode has a few quirks that you might want to know about...")
       b.set_stock_icon(gtk.STOCK_DIALOG_INFO)
       b.add_button("Tell me more...", self._on_more_emacs_information)
@@ -237,7 +237,6 @@ As a nDBG user, you have two options:
 
     # emacs doesn't seem to listen to the first size that we give it, leaving it too small for a minute...
     # this hack basically waits a little bit before we see
-    self._ebox.set_size_request(750,400)
 
     # focus us and get going
     self._install_mw_hooks_to_handle_emacs_suckage()
@@ -299,6 +298,7 @@ As a nDBG user, you have two options:
     tmp_file.close()
     res = self.remote_eval("""(load "%s" nil t t)""" % tmp_file.name)
     del self._pending_cmds[:]
+    os.unlink(tmp_file.name)
 
   def remote_run_ary(self,args,silent=False):
     log2("Launching %s", args)
@@ -349,21 +349,23 @@ As a nDBG user, you have two options:
       self.push_remote_cmd(s)
 
   def set_line_mark_states(self, file_handle, added, changed, removed):
+    if len(added) + len(changed) + len(removed) == 0:
+      return
+
     cmds = []
-    cmds += ["""(with-current-buffer (find-file-noselect "%s")""" % file_handle.absolute_name]
+    abs_name = file_handle.absolute_name
     r = self._mc.resources
     def x(s):
       return "ndbg-%s-image" % s.get_mark_resource(r).el_name
     for l in removed:
-      cmds += ['(ndbg-remove-image-at-line %i)' % l]
+      cmds += ['  (ndbg-remove-mark "%s" %i)' % (abs_name, l)]
     for l in changed:
       m = changed[l]
-      cmds += ['(ndbg-remove-image-at-line %i)' % l]
-      cmds += ['(ndbg-set-image-at-line %s %i)' % (x(m), l)]
+      cmds += ['  (ndbg-remove-mark "%s" %i)' % (abs_name, l)]
+      cmds += ['  (ndbg-add-mark %s "%s" %i)' % (x(m), abs_name, l)]
     for l in added:
       m = added[l]
-      cmds += ['(ndbg-set-image-at-line %s %i)' % (x(m), l)]
-    cmds += ')'
+      cmds += ['  (ndbg-add-mark %s "%s" %i)' % (x(m), abs_name, l)]
     self.push_remote_cmd("\n".join(cmds))
 
 

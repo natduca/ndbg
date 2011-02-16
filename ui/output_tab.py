@@ -76,7 +76,11 @@ class OutputTab(gtk.VBox):
     r.Text = pty.name
     r.Pty = pty
     r.Term = vte.Terminal()
+    r.Term.set_size(80, 8)
     r.Term.set_pty(pty.master_fd)
+    desc = r.Term.get_font().copy()
+    desc.set_size(self._mc.resources.SMALL_FONT_SIZE*pango.SCALE)
+    r.Term.set_font(desc)
     pty.name_changed.add_listener(self._on_pty_renamed)
     if len(self._ls) and self._cbox.get_active() == -1:
       self._cbox.set_active(0)

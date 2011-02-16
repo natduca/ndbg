@@ -171,7 +171,7 @@ if __name__ == "__main__":
   w = gtk.Window()
   w.set_title("test")
   sv = SourceViewTab("./test/test1.c")
-  sv.set_size_request(400,300)
+  w.set_size_request(400,300)
   sv.set_current_breakpoints([1,3,5])
   sv.set_current_line(4)
   sv.show()

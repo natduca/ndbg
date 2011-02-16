@@ -78,7 +78,6 @@ class MainControl(dbus.service.Object):
     self._settings = settings
     self._mw = mw
 
-
     self._registered_process = RegisteredProcess()
     dbus.service.Object.__init__(self, dbus.SessionBus(), "/MainControl")
 
@@ -218,7 +217,7 @@ class MainControl(dbus.service.Object):
           self._run_primary_executable(suspended)
         b.add_button("Re-run program", on_restart)
         b.add_close_button()
-        self._butter_bar_collection.add_bar(b)
+        self.butter_bar_collection.add_bar(b)
 
       self._primary_executable = dlg.primary_executable
       self._on_status_changed()
@@ -472,12 +471,20 @@ class MainControl(dbus.service.Object):
     if len(debugger.processes):
       assert len(debugger.processes) != 0
       assert debugger.first_added_process != None
-      first_name = os.path.basename(debugger.first_added_process.target_exe)
-      n_others = len(debugger.processes) - 1
+      first_valid_name = None
+      n_others = 0
+      for proc in debugger.processes:
+        if proc.backend_info:
+          if not first_valid_name:
+            first_valid_name = os.path.basename(proc.target_exe)
+          else:
+            n_others += 1
       if n_others > 0:
-        name = "%s (+%i more)" % (first_name, n_others)
+        name = "%s (+%i more)" % (first_valid_name, n_others)
+      elif first_valid_name:
+        name = first_valid_name
       else:
-        name = first_name
+        name = None
     else:
       if self._primary_executable:
         app = self._primary_executable[0]

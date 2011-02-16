@@ -32,7 +32,7 @@ class GVimEditor(EditorBase):
 
     mc.settings.register("GVimEditorFirstRun", bool, True)
     if mc.settings.GVimEditorFirstRun:
-      mc.settings.GVimEditorFirstRun = True
+      mc.settings.GVimEditorFirstRun = False
       b = ButterBar("nDBG's GVim mode has a few quirks that you might want to know about...")
       b.set_stock_icon(gtk.STOCK_DIALOG_INFO)
       b.add_button("Tell me more...", self._on_more_gvim_information)
@@ -50,7 +50,6 @@ class GVimEditor(EditorBase):
         # focus the socket
         ed._socket.child_focus(gtk.DIR_TAB_FORWARD)
     self._ebox = MyEBox()
-    self._ebox.set_size_request(750,400)
 
     self._socket = gtk.Socket()
     self._ebox.add(self._socket)

@@ -61,6 +61,15 @@ class Message :
     self.cb = cb
     self.ud = ud
 
+class CancellableMessage(object):
+  def __init__(self):
+    self._run = True
+    self._has_run = False
+  def cancel(self):
+    if self._has_run:
+      raise Exception("Message has already been run. Cannot cancel.")
+    self._run = False
+
 class QuitException(Exception):
   pass
 
@@ -99,6 +108,17 @@ class MessageLoop:
         _pending_message_heap_lock.release()
       except thread.error:
         pass
+
+  @staticmethod
+  def add_cancellable_delayed_message(cb, timeout_ms, *args):
+    msg = CancellableMessage()
+    def run_msg():
+      if not msg._run:
+        return
+      msg._has_run = True
+      cb(*args)
+    MessageLoop.add_delayed_message(run_msg, timeout_ms)
+    return msg
 
   @staticmethod
   def _run_pending_messages():
