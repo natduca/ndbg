@@ -12,8 +12,6 @@ On tap
 
 - NConsole: after pressing enter on a command we just reused, up arrow should re-select that command again
 
-- Breakpoints dont show up when not debugging
-
 - Emacs editor - save the mark we create so we can remove the icon correctly when edits occur
 
 - Hang when process fails to launch. No explanation of what failed.
