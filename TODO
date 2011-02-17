@@ -6,6 +6,8 @@ nResolved?
 
 On tap
 ---------------------------------------------------------------------------
+- vte being in scrollwindow segfaults python
+
 - Fix bugs in sizing persistence and magical disappearing panels
 - Persist panels on standalone windows
 - Ctrl-x control-c of editor when running raises an exception
@@ -91,20 +93,18 @@ On tap
 - Take code for progdb that maintains file search paths to always be supersets and have that in file manager as well
 - Ensure filemanager doesn't get confused by symlinks
 
-- Shrink font on output window tty; increase history on tty to be a LOT longer; add a pop-out button so it can be popped out to a big window
 
 - Cancel button on load symbols dialog? [Kill the backend...]
 
 - Quickopen: pressing enter while a query is pendign should wait for the query to return then use the resulting selection
 
-- Better warning when an app fails to launc [always have output window available?]
+- Better warning when an app fails to launch [always have output window available?]
 
 - Hide the menu bar until ALT is pressed or mouse is near top of window
 
 Architecture
 ---------------------------------------------------------------------------
 - Make the message loop not suck cycles when no callback is enqueued
-- Make Waitable.when_exception and tie it up to MC attaching to invalid pid or nonexistent executable
 
 - Tests should NOT load ~/.ndbg; settings should get cloned so we preserve add state but reset temp values across runs
 
@@ -129,16 +129,16 @@ EditorBase
 ---------------------------------------------------------------------------
 - Disassembly view when no source found
 
-- Create a some_break pixmap. Make variants for those use in editor as well, e.g. cur and active
 
-- Write editor_base unit tests
-
-- Quick find dialog: Sort file hits by directory distance to the currently selected files
-- Right click on file in quickopen and pick "ignore <extension>" and it will get added to extension
-
-
-ProgDB
+ProgDB/QuickOpen
 ---------------------------------------------------------------------------
+- Destory and hide dialog before returning so emacs prompting for revert doesn't lead to modality lock
+- Quickopen slow to catch up to user input, clobbers
+- Quickopens hould keep selected item selected when data changes
+
+ - Right click on file in quickopen and pick "ignore <extension>" and it will get added to extension
+- Quick find dialog: Sort file hits by directory distance to the currently selected files
+
 - Make GotoMethoDialog use asyncrequest
 - Replace GotoMethodDialog with a GotoMethodPopup
 
@@ -158,6 +158,9 @@ Watch/interactive window
 
 Output window
 ---------------------------------------------------------------------------
+- Increase history on tty to be a LOT longer; add a pop-out button so it can be popped out to a big window
+- Focusing output window shoudl focus the vte, not the combo box
+
 - Have a gdb/innards output tty
 
 - Oscilloscope mode --- lock on to a regular queue and always clear the tty
@@ -197,18 +200,3 @@ Other
 
 
 - Unicode and prettyprinters?
-
-
-StackExplorer
----------------------------------------------------------------------------
-- Deal with really big graphs
-- Support for edges to self
-- Clearing of current graph, having different graphs based on start point
-- Saving the current graph as DOT
-- "Explore upward" mode
-- "Explore out of this function" mode
-
-- When exploring, stop UI from updating for improved performance
-
-
-
