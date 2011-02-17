@@ -45,9 +45,12 @@ class _AsyncIODispatcher(asyncore.dispatcher):
     self._handle = handle
     assert handle
     self._pending_sends = []
+    self._closed = False
 
   def handle_read(self, *args):
 #    print "recv: ", args
+    if self._closed:
+      return
     buffer = self.recv(8192)
     MessageLoop.add_message(lambda: self._handle._read.fire(buffer))
 
@@ -71,6 +74,8 @@ class _AsyncIODispatcher(asyncore.dispatcher):
         del self._pending_sends[0]
 
   def handle_close(self):
+    self._closed = True
+    del self._pending_sends[:]
     MessageLoop.add_message(self._handle._on_close)
 
 

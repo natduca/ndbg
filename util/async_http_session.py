@@ -48,8 +48,12 @@ class AsyncHTTPSession(object):
         d = dict(arys)
         self._cur_headers = d
         if not d.has_key("Content-Length"):
-          self._io.close()
-          raise Exception("Malformed header")
+          log1("Malformed header")
+          self._found_header = False
+          self._cur_headers = ""
+          if self._io:
+            self._io.close()
+          return
         self._content_length_goal  = int(d["Content-Length"])
         self._on_read(body)
     else:
@@ -76,6 +80,10 @@ class AsyncHTTPSession(object):
     cb(headers, body)
 
   def _on_close(self):
+    log1("closed");
     self._io = None
     self._closed.fire()
 
+  @property
+  def closed(self):
+    return self._closed
