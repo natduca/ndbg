@@ -28,32 +28,49 @@ class LineMarkState(object):
     self.on_callstack = False # line is on the callstack, but not current
     self.active_frame = False # line is not the current_line, but is the active frame
     self.breakpoint = False   # line has a breakpoint set
+    self.breakpoint_state = ""   # state of breakpoint (all,some,none,disabled)
 
   def get_mark_resource(self, r):
     if self.current_line:
       if self.breakpoint:
-        m = r.mark_current_line_and_break
+        if self.breakpoint_state == 'disabled':
+          m = r.mark_current_line_and_break
+        else:
+          m = r.mark_current_line_and_break_disabled
       else:
         m = r.mark_current_line
     elif self.on_callstack:
       if self.breakpoint:
-        m = r.mark_on_callstack_and_break
+        if self.breakpoint_state == 'disabled':
+          m = r.mark_on_callstack_and_break_disabled
+        else:
+          m = r.mark_on_callstack_and_break
       else:
         m = r.mark_on_callstack
     elif self.breakpoint:
-      m = r.mark_all_break
+      if self.breakpoint_state == 'all':
+        m = r.mark_all_break
+      elif self.breakpoint_state == 'some':
+        m = r.mark_some_break
+      elif self.breakpoint_state == 'none':
+        m = r.mark_error_break
+      elif self.breakpoint_state == 'disabled':
+        m = r.mark_disabled_break
+      else:
+        raise Exception("Unrecognized breakpoint state")
     else:
       m = None
     return m
 
   def __str__(self):
-    return "current_line=%s on_callstack=%s active_frame=%s breakpoint=%s" % (self.current_line,self.on_callstack,self.active_frame,self.breakpoint)
+    return "current_line=%s on_callstack=%s active_frame=%s breakpoint=%s breakpoint_state=%s" % (self.current_line,self.on_callstack,self.active_frame,self.breakpoint,self.breakpoint_state)
   def __eq__(self,that):
     res = True
     res &= self.current_line == that.current_line
     res &= self.on_callstack == that.on_callstack
     res &= self.active_frame == that.active_frame
     res &= self.breakpoint == that.breakpoint
+    res &= self.breakpoint_state == that.breakpoint_state
     return res
   def __ne__(self,that):
     return not self.__eq__(that)
@@ -202,11 +219,28 @@ class EditorBase(object):
       return new_line_marks_by_loc[fh][loc.line_num]
 
     # go through breakpoints and add them table
-    for b in self._mc.debugger.breakpoints:
-      if b.some_valid:
-        for loc in b.actual_location_list:
-          m = getmark(loc)
-          m.breakpoint = True
+    if len(self._mc.debugger.processes):
+      for b in self._mc.debugger.breakpoints:
+        if b.all_valid:
+          for loc in b.actual_location_list:
+            m = getmark(loc)
+            m.breakpoint = True
+            m.breakpoint_state = 'all'
+        elif b.some_valid:
+          for loc in b.actual_location_list:
+            m = getmark(loc)
+            m.breakpoint = True
+            m.breakpoint_state = 'some'
+        else:
+          for loc in b.actual_location_list:
+            m = getmark(loc)
+            m.breakpoint = True
+            m.breakpoint_state = 'none'
+    else:
+      for b in self._mc.debugger.breakpoints:
+        m = getmark(b.location)
+        m.breakpoint = True
+        m.breakpoint_state = 'all'
 
     # add current and active frames to the table
     if self._mc.debugger.active_thread: # we probably just went from running to break...
