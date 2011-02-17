@@ -39,8 +39,8 @@ class OutputTab(gtk.VBox):
     cbox.connect('changed', self._on_active_pty_changed)
 
     # term box
-    term_box = gtk.ScrolledWindow()
-    term_box.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+    term_box = gtk.VBox() # gtk.ScrolledWindow()
+#    term_box.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
     self._term_box = term_box
 
     self.pack_start(term_box,True,True,0)
@@ -79,7 +79,7 @@ class OutputTab(gtk.VBox):
     r.Text = pty.name
     r.Pty = pty
     r.Term = vte.Terminal()
-    r.Term.set_size(80, 8)
+#    r.Term.set_size(80, 8)
     r.Term.set_pty(pty.master_fd)
     desc = r.Term.get_font().copy()
     desc.set_size(self._mc.resources.SMALL_FONT_SIZE*pango.SCALE)
