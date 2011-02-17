@@ -18,7 +18,7 @@ class AsyncHTTPSession(object):
 
     self._found_header = False
     self._cur_header = ""
-    self._cur_body = ""
+    self._cur_content = ""
     self._cur_headers = None
 
     self._pending_request_cbs = deque()
@@ -38,7 +38,7 @@ class AsyncHTTPSession(object):
       if idx:
 #        print "header found"
         self._found_header = True
-        body = self._cur_header[idx+4:]
+        content = self._cur_header[idx+4:]
         headers = self._cur_header[:idx]
         self._cur_header = ''
         lines = headers.split("\r\n")
@@ -55,29 +55,29 @@ class AsyncHTTPSession(object):
             self._io.close()
           return
         self._content_length_goal  = int(d["Content-Length"])
-        self._on_read(body)
+        self._on_read(content)
     else:
-      self._cur_body += data
-      if len(self._cur_body) >= self._content_length_goal:
-        remainder = self._cur_body[self._content_length_goal:]
-        body = self._cur_body[:self._content_length_goal]
-        self._cur_body = ''
+      self._cur_content += data
+      if len(self._cur_content) >= self._content_length_goal:
+        remainder = self._cur_content[self._content_length_goal:]
+        content = self._cur_content[:self._content_length_goal]
+        self._cur_content = ''
 
         d = self._cur_headers
         self._cur_headers = None
 
         self._found_header = False
 
-        # body recvd
-        self._on_response(d, body)
+        # content recvd
+        self._on_response(d, content)
 
         # more?
         if len(remainder):
           self._on_read(remainder)
 
-  def _on_response(self, headers, body):
+  def _on_response(self, headers, content):
     cb = self._pending_request_cbs.popleft()
-    cb(headers, body)
+    cb(headers, content)
 
   def _on_close(self):
     log1("closed");
