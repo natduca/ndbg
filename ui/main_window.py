@@ -257,11 +257,11 @@ class MainWindow(gtk.Window):
     vbox = gtk.VBox()
     vbox.show()
 
-    vpane = gtk.VPaned()
+    vpane = BetterVPaned()
     vpane.id = "vpane1"
     vpane.show()
 
-    hpane = gtk.HPaned()
+    hpane = BetterHPaned()
     hpane.id = "vpane2"
     hpane.show()
 
@@ -322,7 +322,7 @@ class MainWindow(gtk.Window):
     # add listeners
     self.connect('size-allocate', self._window_size_changed)
     for splitter in self._splitters:
-      splitter.connect('notify::position', self._splitter_changed)
+      splitter.position_changed.add_listener(self._splitter_position_changed)
 
     # update pane sizes
     self._splitter_size_set_needed = True
@@ -336,9 +336,8 @@ class MainWindow(gtk.Window):
       self._splitter_size_set_needed = False 
     self._save_sizes()
 
-  def _splitter_changed(self, splitter, param):
-    if self._layout_changing:
-      return
+  def _splitter_position_changed(self):
+    assert self._layout_changing == False
     self._save_sizes()
 
   def _update_splitter_sizes(self):
