@@ -25,19 +25,27 @@ class ChromeTabFinder(object):
     try:
       s = socket.socket()
       s.connect((self._host, self._port))
-      self._do_handshake(s)
+      ChromeTabFinder.do_handshake(s)
       self._session = AsyncHTTPSession(s)
     except:
       self._session = None
       log2("Could not connect to chrome on %s:%s", self._host, self._port)
 
+    if self._session:
+      self._session.closed.add_listener(self._on_session_closed)
+
+
+  def _on_session_closed(self):
+    assert self._session
+    self._session = None
+
   @property
   def chrome_found(self):
     return self._session != None
 
-  def _do_handshake(self,s):
+  @staticmethod
+  def do_handshake(s):
     i = "ChromeDevToolsHandshake"
-    print len(i)
     handshake = "ChromeDevToolsHandshake\r\n"
     remaining = handshake
     while len(remaining):
@@ -46,6 +54,8 @@ class ChromeTabFinder(object):
     handshake_ack = s.recv(len(handshake))
     if handshake_ack != handshake:
       raise Exception('handshake failed')
+    else:
+      log1("handshake succeeded")
 
   def _begin_get_tab_list(self):
     self._get_tab_list_pending = True
@@ -54,7 +64,8 @@ class ChromeTabFinder(object):
   def _finish_get_tab_list(self, headers, content):
     self._get_tab_list_pending = False
     resp = json.loads(content)
-    print resp
+    print "content=%s"%content
+#    print resp
 
   def _on_close(self):
     log1("chrome connection was closed. chrome processes won't be available.")

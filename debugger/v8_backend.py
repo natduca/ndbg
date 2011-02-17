@@ -1,52 +1,53 @@
+import json
 from util import *
 
+RESULT_CODE_OK = 0
+RESULT_ILLEGAL_TAB_STATE = 1
+RESULT_UNKNOWN_TAB = 2
+RESULT_DEBUGGER_ERROR = 3
+RESULT_UNKNOWN_COMMAND = 4
+
+def _result_code_to_string(code) {
+  map = {
+    0 : "RESULT_CODE_OK",
+    1 : "RESULT_ILLEGAL_TAB_STATE",
+    2 : "RESULT_UNKNOWN_TAB",
+    3 : "RESULT_DEBUGGER_ERROR",
+    4 : "RESULT_UNKNOWN_COMMAND"
+    }
+  return map[code]
+}
+
+class V8Session(object):
+  def __init__(self):
+    iv = InterfaceValidator(self)
+    iv.expect_method("attach(self)")
+    iv.expect_method("detach(self)")
+    iv.expect_method("run_command_async(self, args, cb)")
+    iv.expect_get_property("closed")
+
 class V8Backend(object):
-  def v8_request(self, command, args):
+  def __init__(self, v8session):
+    self._next_seq = 0
+    assert isinstance(v8session,V8session)
+    self._session = v8session
+    self._session.attach()
+    self._session.closed.add_listener(self._on_closed)
+
+  def _on_closed(self):
+    log("session closed")
+    self._session = None
+
+  def request(self, command, args, cb):
     this_seq = self._next_seq
     self._next_seq += 1
-    self.general_request({
+    v8cmd = {
         "seq" : this_seq,
         "type" : "request",
         "command" : command,
         "arguments" : args
-        })
-    text = pson.dumps(args)
-    self.general_request("V8Debugger", cmd)
-
-  def general_request(self, tool, args, cb = None):
-    if not args:
-      args = {}
-    def pass_cb(h,resp):
-      print "%s\n%s\n\n" % (h, resp)
-      if cb:
-        cb(resp)
-    self._session.request({"Tool":tool}, pson.dumps(args), pass_cb)
-
-  def __init__(self, host, port):
-    self._next_seq = 0
-
-    s = socket.socket()
-    s.connect((host, port))
-    self._do_handshake(s)
-
-    self._session = AsyncHTTPSession(s)
-    self.general_request("DevToolsService", {"command": "ping"})
-    self.general_request("DevToolsService", {"command": "tabs"})
-
-  def _do_handshake(self,s):
-    i = "ChromeDevToolsHandshake"
-    print len(i)
-    handshake = "ChromeDevToolsHandshake\r\n"
-    remaining = handshake
-    while len(remaining):
-      sent = s.send(handshake)
-      remaining = remaining[sent:]
-    handshake_ack = s.recv(len(handshake))
-    if handshake_ack != handshake:
-      raise Exception('handshake failed')
-
-  def _do_init(self, host, port):
-    pass
+        }
+    self._session.run_command_async(v8cmd, cb)
 
   def _on_close(self):
     print "v8: closed"
@@ -57,7 +58,7 @@ if __name__ == "__main__":
   set_loglevel(2)
   def init(*args):
     try:
-      be = V8Backend(*args)
+      be = ChromeV8Backend(*args)
     except:
       import traceback; traceback.print_exc();
       MessageLoop.quit()
@@ -65,7 +66,7 @@ if __name__ == "__main__":
 
   # for chrome, launch with chrome --remote-shell-port
   import sys
-  MessageLoop.add_message(init, "localhost", int(sys.argv[1]))
+  MessageLoop.add_message(init, "localhost", int(sys.argv[1]), int(sys.argv[2]))
 #  MessageLoop.add_message(init, "localhost", 5858)
   MessageLoop.run_no_gtk(lambda: False)
   print "main done"
