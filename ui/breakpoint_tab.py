@@ -162,6 +162,10 @@ class BreakpointTab(gtk.VBox):
         # TODO(nduca): pick the location to focus based on the active process
         self._mc.focus_location(b.actual_location_list[0])
         return True
+    elif keyname == "Delete":
+      b = self.get_selected()
+      if b:
+        self._mc.debugger.breakpoints.remove(b)
 
   def _on_breakpoints_changed(self):
     self._breakpoints = self._mc.debugger.breakpoints
