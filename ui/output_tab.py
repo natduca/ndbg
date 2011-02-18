@@ -26,6 +26,8 @@ class OutputTab(gtk.VBox):
     self._id = None
     self._mc = mc
 
+    self._mc.settings.register("OutputTab_ScrollbackLines", int, 1000)
+
     # ls
     self._ls = PListStore(Text = str, Pty = object, Term = object)
 
@@ -79,6 +81,8 @@ class OutputTab(gtk.VBox):
     r.Text = pty.name
     r.Pty = pty
     r.Term = vte.Terminal()
+    r.Term.set_property('scrollback-lines', self._mc.settings.OutputTab_ScrollbackLines)
+
 #    r.Term.set_size(80, 8)
     r.Term.set_pty(pty.master_fd)
     desc = r.Term.get_font().copy()
