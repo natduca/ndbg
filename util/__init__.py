@@ -34,4 +34,6 @@ from .remote_class import *
 from .registered_process import *
 from .process_utils import *
 from .async_io import *
+from .async_http_session import *
 from .better_paned import *
+

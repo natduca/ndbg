@@ -17,6 +17,7 @@ from util.event import *
 class Timer(object):
   def __init__(self,interval,cb=None,enabled=True):
     self._enabled = False
+    self._interval = interval
     self._timeout_bound = False
     self._tick = Event()
     if cb:
@@ -41,7 +42,7 @@ class Timer(object):
     self._enabled = val
     if self._enabled == True:
       if self._timeout_bound == False:
-        glib.timeout_add(32,self._fire)
+        MessageLoop.add_delayed_message(self._fire, self._interval)
         self._timeout_bound = True
       else:
         pass

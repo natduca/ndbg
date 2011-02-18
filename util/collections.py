@@ -39,7 +39,7 @@ def diff(iter1,iter2):
 
   s1 = set(iter1)
   s2 = set(iter2)
-  
+
   res = DynObject()
   res.removed = s1.difference(s2)
   res.added = s2.difference(s1)
