@@ -1,3 +1,16 @@
+# Copyright 2011 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import asyncore
 from asynchat import async_chat
 import socket
@@ -7,17 +20,19 @@ from util import *
 _iothread = None
 
 class AsyncIO(object):
-  def __init__(self):
+  def __init__(self, h):
     self._read = Event()
     self._close = Event()
     self._opened = False
+    self._open(h)
 
   def _set_dispatcher(self, dispatcher):
     self._dispatcher = dispatcher
 
-  def open(self, f):
-    """Begins the IO"""
-    _IOThread.open(self, f)
+  def _open(self, h):
+    if not (isinstance(h, socket.socket) or isinstance(h, file)):
+      raise Exception("AsyncIO for supported only for sockets and files")
+    _IOThread.open(self, h)
 
   @property
   def read(self):
@@ -27,16 +42,16 @@ class AsyncIO(object):
     self._dispatcher._queue_write(data, on_write_cb)
 
   @property
-  def close(self):
+  def closed(self):
     return self._close
 
   @property
-  def closed():
+  def is_closed():
     return self._dispatcher == None
 
   def _on_close(self):
     self._dispatcher = None
-    self.close.fire()
+    self.closed.fire()
 
 
 class _AsyncIODispatcher(asyncore.dispatcher):

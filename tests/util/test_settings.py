@@ -21,7 +21,7 @@ class SettingsTest(unittest.TestCase):
     f = tempfile.NamedTemporaryFile()
     s = settings._Settings(f.name)
     self.assertFalse(s.has_setting("foo"))
-    self.assertRaises(SettingDoesntExistException,lambda: s["foo"])
+    self.assertRaises(settings.SettingDoesntExistException,lambda: s["foo"])
     s.register("doSomething",bool,True)
     self.assertTrue(s.has_setting("doSomething"))
     self.assertFalse(s.is_manually_set("doSomething"))
@@ -29,7 +29,7 @@ class SettingsTest(unittest.TestCase):
     self.assertTrue(s.doSomething)
     self.assertRaises(Exception,lambda: s.register("doSomething",int,None)) # type mismatch
     self.assertRaises(TypeError,lambda: s.set("doSomething","Foo"))
-    self.assertRaises(SettingDoesntExistException,lambda: s.set("bar","boo"))
+    self.assertRaises(settings.SettingDoesntExistException,lambda: s.set("bar","boo"))
 
     # change the setting manually to false...
     s.set("doSomething",False)

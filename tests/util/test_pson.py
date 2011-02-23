@@ -90,8 +90,6 @@ class PSONTest(unittest.TestCase):
   def test_dump(self):
     for i in range(len(self._objs)):
       p = pson.dumps(self._objs[i],pretty=True)
-      print "\n\n"
-      print p
       self.assertEqual(p,self._pretty_strs[i])
 
   def test_load(self):

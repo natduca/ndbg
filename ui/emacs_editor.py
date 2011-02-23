@@ -453,6 +453,6 @@ if __name__ == "__main__":
   w.connect('destroy', ondest)
 
   w.show_all()
-  MessageLoop.add_cleanup(lambda: ed.destroy())
+  MessageLoop.add_cleanup_hook(lambda: ed.destroy())
   MessageLoop.run()
 

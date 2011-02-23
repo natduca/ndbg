@@ -94,7 +94,7 @@ class GdbBackend(DebuggerBackend):
     # tell the main loop to clean us up
     global _cleanup_added
     if not _cleanup_added:
-      MessageLoop.add_cleanup(GdbBackend._cleanup)
+      MessageLoop.add_cleanup_hook(GdbBackend._cleanup)
       _cleanup_added = True
 
     # init

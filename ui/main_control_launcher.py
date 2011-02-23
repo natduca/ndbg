@@ -31,7 +31,6 @@ class MainControlLauncher(dbus.service.Object):
     self._launchable_processes = []
     self._passive_processes = []
     MessageLoop.add_keyboard_interrupt_hook(self._on_keyboard_interrtupt)
-    MessageLoop.add_quit_hook(self._on_quit)
 
     MessageLoop.add_delayed_message(self._on_timeout, 5000)
 
@@ -173,9 +172,6 @@ class MainControlLauncher(dbus.service.Object):
         MessageLoop.quit()
       else:
         return True
-
-  def _on_quit(self):
-    pass
 
   def _on_keyboard_interrtupt(self):
     if self._proc and self._proc.poll() == None:
