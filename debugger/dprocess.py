@@ -138,7 +138,8 @@ class DProcess(object):
 
   # control type stuffs..
   def kill(self):
-    assert self._debugger.status == STATUS_BREAK
+    if self._debugger:
+      assert self._debugger.status == STATUS_BREAK
     self._backend.kill_process(self)
 
   def detach(self):
