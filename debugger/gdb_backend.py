@@ -749,7 +749,6 @@ class GdbBackend(DebuggerBackend):
           t._set_status(STATUS_BREAK)
           proc.threads.append(t)
         self.processes.add(proc)
-        assert proc._debugger != None
         for t in self._new_threads:
           self._threads.add(t)
         del self._new_threads[:]
