@@ -169,7 +169,7 @@ class QuickOpenDialog(gtk.Dialog):
         self._truncated_bar.hide()
 
       elapsed = time.time() - start_time
-      log1("Model update time: %0.3fms" % (elapsed * 1000))
+      log2("Model update time: %0.3fms" % (elapsed * 1000))
 
       if len(self._model) > 0:
         self._treeview.get_selection().select_path((0,))

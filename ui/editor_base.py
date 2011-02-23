@@ -306,13 +306,22 @@ class EditorBase(object):
   def _on_quick_open_file(self,*unused):
     dlg = QuickOpenDialog(self._mc.settings, self._mc.filemanager.progdb)
     res = dlg.run()
-    dlg.hide()
     if res == gtk.RESPONSE_OK:
-      for fn in dlg.selected_files:
+      selected_files = list(dlg.selected_files)
+    dlg.destroy()
+    def do_open_file():
+      for fn in selected_files:
         fh = self._mc.filemanager.find_file(fn)
         if fh.exists:
           self.focus_file(fh)
           self._do_grab_focus()
+    # For some reason, Gtk doesn't actually finish hiding the dialog
+    # until we return to the main loop. In the case of the
+    # EmacsEditor, the act of focusing a file that has changed will
+    # lead to the focus_file call blocking on an emacs "file has
+    # changed" warning. To avoid this, we
+    if res == gtk.RESPONSE_OK:
+      MessageLoop.add_delayed_message(do_open_file,100)
 
   def open_file(self,requested_filename):
     fh = self.mc.filemanager.find_file(requested_filename)

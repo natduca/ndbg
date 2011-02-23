@@ -6,7 +6,8 @@ nResolved?
 
 On tap
 ---------------------------------------------------------------------------
-- vte being in scrollwindow segfaults python
+
+- Launch program from debug menu doesn't work
 
 - Fix bugs in sizing persistence and magical disappearing panels
 - Persist panels on standalone windows
@@ -19,6 +20,8 @@ On tap
 - Hang when process fails to launch. No explanation of what failed.
   - Rename Waitable to Task. Make passing an error cb mandatory to all tasks
 
+- Emacs: reverting a buffer with marks in it leads to the same mark there two times
+
 - Need status dialog when attaching to a process via dpassiveprocess.attach()
 
 - Long delay when breakpoint is hit in chrome
@@ -28,8 +31,6 @@ On tap
 - Support Ctl-N Ctl-P in NConsole if emacs editor is bound
 
 - Way to find source when not found
-
-- When quickopening files that have changed with emacs, qo dialog hangs because emacs is prompting whether to revert
 
 - Hitting breakpoint not reliably selecting active thread with multiple processes [chrome dbg]
 
@@ -158,6 +159,8 @@ Watch/interactive window
 
 Output window
 ---------------------------------------------------------------------------
+- vte being in scrollwindow segfaults python
+
 - Increase history on tty to be a LOT longer; add a pop-out button so it can be popped out to a big window
 - Focusing output window shoudl focus the vte, not the combo box
 
