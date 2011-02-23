@@ -259,10 +259,12 @@ class MainWindow(gtk.Window):
 
     vpane = BetterVPaned()
     vpane.id = "vpane1"
+    vpane.position_gravity = BETTER_PANE_POSITION_GRAVITY_END
     vpane.show()
 
     hpane = BetterHPaned()
     hpane.id = "vpane2"
+    hpane.position_gravity = BETTER_PANE_POSITION_GRAVITY_RELATIVE
     hpane.show()
 
     self._pending_save = None
@@ -275,17 +277,14 @@ class MainWindow(gtk.Window):
     vbox.pack_start(menu_bar, False,False, 0)
     vbox.pack_start(butter_bar_collection, False,False, 0)
     vbox.pack_start(vpane,True,True,0)
-    vpane.pack1(cstage,True,True)
-    vpane.pack2(hpane,False,True)
-    hpane.pack1(panel1,True,True)
-    hpane.pack2(panel2,True,True)
+    vpane.pack1(cstage)
+    vpane.pack2(hpane)
+    hpane.pack1(panel1)
+    hpane.pack2(panel2)
 
-    def config_hpane_default():
-      print "configuring hpane default"
-      panel1.set_size_request(150,-1)
-      panel2.set_size_request(150,-1)
-    self._pane_configure_default_cbs = {
-      hpane.id :  config_hpane_default
+    self._pane_default_positions = {
+      vpane.id :  150,
+      hpane.id :  50,
       }
 
   @property
@@ -311,9 +310,9 @@ class MainWindow(gtk.Window):
     self._settings.register("WindowSize", dict, {})
     try:
       self.set_size_request(self._settings.WindowSize["width"], self._settings.WindowSize["height"])
-      print "Using saved size"
+#      print "MainWindow: Using saved size"
     except KeyError:
-      print "Using default size"
+#      print "MainWindow: Using default size"
       self.set_size_request(750,650)
 
       
@@ -325,15 +324,12 @@ class MainWindow(gtk.Window):
       splitter.position_changed.add_listener(self._splitter_position_changed)
 
     # update pane sizes
-    self._splitter_size_set_needed = True
+    self._update_splitter_sizes()
 
 
   def _window_size_changed(self, *args):
     if self._layout_changing:
       return
-    if self._splitter_size_set_needed:
-      self._update_splitter_sizes()
-      self._splitter_size_set_needed = False 
     self._save_sizes()
 
   def _splitter_position_changed(self):
@@ -343,7 +339,7 @@ class MainWindow(gtk.Window):
   def _update_splitter_sizes(self):
     if self._layout == None:
       return
-    print "MW: Splitter layout updating"
+#    print "MW: Splitter layout updating"
     self._layout_changing = True
     splitter_sizes =  self._settings.SplitterSizes
     for splitter in self._splitters:
@@ -355,15 +351,16 @@ class MainWindow(gtk.Window):
 #        print "%s: spos %s->%s"  % (self._layout, splitter.id,pos)
         splitter.set_position(pos)
       else:
-        if self._pane_configure_default_cbs.has_key(splitter.id):
-          self._pane_configure_default_cbs[splitter.id]()
+        if self._pane_default_positions.has_key(splitter.id):
+#          print "setting position %i" % self._pane_default_positions[splitter.id]
+          splitter.set_position(self._pane_default_positions[splitter.id])
 
     def stop_ignoring_changes():
 #      import pdb; pdb.set_trace()
       assert self._pending_stop_ignoring_changes_message
       self._pending_stop_ignoring_changes_message = None
       self._layout_changing = False
-      print "MW: Splitter layout completely done"
+#      print "MW: Splitter layout completely done"
     if self._pending_stop_ignoring_changes_message:
       self._pending_stop_ignoring_changes_message.cancel()
     self._pending_stop_ignoring_changes_message = MessageLoop.add_cancellable_delayed_message(stop_ignoring_changes, 250)
@@ -389,10 +386,10 @@ class MainWindow(gtk.Window):
       if splitter_sizes.has_key(self._layout) == False:
         splitter_sizes[self._layout] = {}
       if splitter_sizes[self._layout].has_key(splitter.id) and splitter.get_position() != splitter_sizes[self._layout][splitter.id]:
-        print "%s: save %s<-%s" % (self._layout, splitter.id, splitter.get_position())
+ #       print "%s: save %s<-%s" % (self._layout, splitter.id, splitter.get_position())
         needs_commit = True
       elif not splitter_sizes[self._layout].has_key(splitter.id):
-        print "%s: save %s<-%s" % (self._layout, splitter.id, splitter.get_position())
+#        print "%s: save %s<-%s" % (self._layout, splitter.id, splitter.get_position())
         needs_commit = True
 #      import pdb; pdb.set_trace()
       splitter_sizes[self._layout][splitter.id] = splitter.get_position()
@@ -405,8 +402,8 @@ class MainWindow(gtk.Window):
 
   @layout.setter
   def layout(self,layout):
-    print "MW: Layout changing"
+#    print "MW: Layout changing"
     self._layout = layout
     MainWindowOverlay.set_layout(self._settings, self, layout)
     self._update_splitter_sizes()
-    print "MW: Layout change done. Splitter change pending."
+#    print "MW: Layout change done. Splitter change pending."

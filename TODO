@@ -9,7 +9,6 @@ On tap
 
 - Launch program from debug menu doesn't work
 
-- Fix bugs in sizing persistence and magical disappearing panels
 - Persist panels on standalone windows
 - Ctrl-x control-c of editor when running raises an exception
 
