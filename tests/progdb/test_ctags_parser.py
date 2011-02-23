@@ -25,6 +25,7 @@ class TestCTagsParser(unittest.TestCase):
     doFile("tests/resources/ctags_output_1")
     doFile("tests/resources/ctags_output_2")
     doFile("tests/resources/ctags_output_3")
+    doFile("tests/resources/ctags_output_4")
 
 
   def test_parse_from_source(self):
