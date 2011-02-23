@@ -23,11 +23,10 @@ from util import *
 class AsyncHTTPSession(object):
   def __init__(self, s):
     self._closed = Event()
-    self._io = AsyncIO()
+    self._io = AsyncIO(s)
 
     self._io.read.add_listener(self._on_read)
     self._io.close.add_listener(self._on_close)
-    self._io.open(s)
 
     self._found_header = False
     self._cur_header = ""
