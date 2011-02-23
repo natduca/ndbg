@@ -48,6 +48,7 @@ class TestDebuggerBreakpoints_Test2(unittest.TestCase):
     # tracing system...
     hit_trace = []
     def trace_and_resume(tv):
+      log1("t_a_r %s", tv)
       hit_trace.append(tv)
       self.assertEqual(self._debugger.active_thread, thr)
       thr.begin_resume()
@@ -63,7 +64,7 @@ class TestDebuggerBreakpoints_Test2(unittest.TestCase):
     MessageLoop.run_until(lambda: len(hit_trace) == 3)
 
     trace_sr = " ".join(hit_trace)
-    self.assertEqual(trace_sr, "b1 b2 b1")
+    self.assertEqual(trace_sr, "b2 b1 b2")
 
   def tearDown(self):
     self._debugger.shutdown()

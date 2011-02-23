@@ -83,7 +83,10 @@ class WellBehavedThread():
   def stop(self):
     log2("%s thread stopping", self._name)
     self._run = False
-    self._thread.join()
+    try:
+      self._thread.join()
+    except RuntimeError:
+      pass
     log2("%s thread stopped", self._name)
     self._thread = None
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 #define MY_DEFINE x
 
-int globalVariable; // dont move this, tests want this to be on line 3
+int globalVariable; // dont move this, tests want this to be on line 16
 
 void someFunction(int x) {
 }

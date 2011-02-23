@@ -47,7 +47,7 @@ def test_is_selected(in_testnames, testname):
 
 ###########################################################################
 
-class NdbVerbseTestResult(unittest.TestResult):
+class NdbVerboseTestResult(unittest.TestResult):
   def addError(self,test,err):
     traceback.print_tb(err[2])
     unittest.TestResult.addError(self,test,err)
@@ -72,7 +72,7 @@ def set_debug_mode(halt):
 
 ###########################################################################
 
-def run(testnames = None):
+def do_run(testnames = None):
   """
   Run a test given a list of test regexps to run, or all tests.
   """
@@ -135,7 +135,7 @@ def run(testnames = None):
         log0_raw("\n")
       else:
         for case in suite:
-          tr = NdbVerbseTestResult()
+          tr = NdbVerboseTestResult()
           log0_raw("----------------------------------------------------------------------")
           log0_raw("%s", case.id())
           case.run(result=tr)
@@ -147,7 +147,13 @@ def run(testnames = None):
             log0("Fail\n")
     log2("TestSystem: done with module %s", dir)
   log2("TestSystem: done with all ymodules")
-  MessageLoop.set_in_test_mode(False)
+
+def run(testnames = None):
+  try:
+    do_run(testnames)
+  finally:
+    MessageLoop.quit(True)
+    MessageLoop.set_in_test_mode(False)
 
 
 # Stray code to load tests from a list of classes:

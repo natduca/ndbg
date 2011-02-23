@@ -27,7 +27,7 @@ class A():
     return self.val
 
   def exception(self):
-    raise Exception("Bingbong")
+    raise Exception("This is an expected exception")
 
   def sleep_then_get(self):
     time.sleep(0.5)
@@ -76,3 +76,9 @@ class TestRemoteClass(unittest.TestCase):
     self.assertEqual(v, 5)
     self.assertRaises(Exception, lambda: a.call.exception())
     self.assertRaises(Exception, lambda: a.call_async_waitable.exception().wait())
+    a.shutdown()
+
+  def test_leave_running(self):
+    a = RemoteClass(A)
+    a.call_async.set(3)
+

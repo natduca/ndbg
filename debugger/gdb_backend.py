@@ -94,7 +94,7 @@ class GdbBackend(DebuggerBackend):
     # tell the main loop to clean us up
     global _cleanup_added
     if not _cleanup_added:
-      MessageLoop.add_cleanup(GdbBackend._cleanup)
+      MessageLoop.add_cleanup_hook(GdbBackend._cleanup)
       _cleanup_added = True
 
     # init
@@ -749,7 +749,6 @@ class GdbBackend(DebuggerBackend):
           t._set_status(STATUS_BREAK)
           proc.threads.append(t)
         self.processes.add(proc)
-        assert proc._debugger != None
         for t in self._new_threads:
           self._threads.add(t)
         del self._new_threads[:]

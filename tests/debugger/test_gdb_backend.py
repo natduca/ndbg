@@ -97,7 +97,7 @@ class GdbTestBasics(unittest.TestCase):
     proc = subprocess.Popen(["tests/apps/test_multiproc"])
     self.assertTrue(proc != None)
 
-    p = gdb.begin_attach_to_pid(proc.pid).wait()
+    p = gdb.begin_attach_to_pid(proc.pid, False).wait()
     self.assertEqual(gdb.status, GDB_STATUS_BREAK)
     self.assertEqual(len(gdb.processes), 1)
 
@@ -108,7 +108,7 @@ class GdbTestBasics(unittest.TestCase):
 
   def test_attach_nonexistent(self):
     gdb = GdbBackend()
-    self.assertRaises(debugger.DebuggerException,lambda: gdb.begin_attach_to_pid(999999).wait())
+    self.assertRaises(debugger.DebuggerException,lambda: gdb.begin_attach_to_pid(999999,False).wait())
     gdb.shutdown(force=True)
 
 

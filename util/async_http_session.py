@@ -1,3 +1,16 @@
+# Copyright 2011 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 from __future__ import absolute_import
 import socket
 from collections import *
@@ -10,11 +23,10 @@ from util import *
 class AsyncHTTPSession(object):
   def __init__(self, s):
     self._closed = Event()
-    self._io = AsyncIO()
+    self._io = AsyncIO(s)
 
     self._io.read.add_listener(self._on_read)
     self._io.close.add_listener(self._on_close)
-    self._io.open(s)
 
     self._found_header = False
     self._cur_header = ""

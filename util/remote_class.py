@@ -15,6 +15,7 @@ from . import *
 from util.exponential_backoff import *
 import multiprocessing
 import traceback
+import weakref
 
 def _RemoteServer(cls, c2s, s2c):
   log2("RemoteServer for %s started", cls)
@@ -74,6 +75,8 @@ def _RemoteServer(cls, c2s, s2c):
   os._exit(-1)
 
 
+_active_clients = []
+
 class RemoteClient():
   def __init__(self, cls):
     self._cls = cls
@@ -88,6 +91,8 @@ class RemoteClient():
     self._pending_waitables = { }
 
     self._process_server_replies_throttle = ThrottledCallback(self._process_server_replies)
+
+    _active_clients.append(weakref.ref(self)) # add cleanup here because we have a thread
 
   def _c2s_put(self, cmd,*args): # uses message loop to try to push onto queue
     def try_put():
@@ -144,19 +149,39 @@ class RemoteClient():
 
   def shutdown(self):
     log2("Shutting down remote class %s", self._cls)
-    try:
-      self._c2s.put(('quit',tuple()))
-    except Queue.Full:
-      log2("c2s queue full. Force killing process")
-      self._process.terminate()
-      return
-    self._process.join(timeout=0.5)
-    if self._process.is_alive():
-      self._process.terminate()
-    self._process = None
-    self._c2s = None
-    self._s2c = None
+    if self._c2s:
+      try:
+        self._c2s.put(('quit',tuple()))
+      except Queue.Full:
+        log2("c2s queue full. Force killing process")
+        self._process.terminate()
+        return
+      self._c2s = None
+      self._s2c = None
+    if self._process:
+      self._process.join(timeout=0.5)
+      if self._process.is_alive():
+        self._process.terminate()
+      self._process = None
     log2("RemoteClass %s has shut down", self._cls)
+
+  @staticmethod
+  def _cleanup():
+    global _active_clients
+    new_active_clients = []
+    for b_wr in _active_clients:
+      b = b_wr()
+      if b:
+        new_active_clients.append(b_wr)
+        log1("RemoteClient: Forcing shutdown of %s", b)
+        try:
+          b.shutdown()
+        except:
+          traceback.print_exc()
+    _active_clients = []
+
+# install the cleanup
+MessageLoop.add_cleanup_hook(RemoteClient._cleanup)
 
 class RemoteClassInner(object):
   def __init__(self,parent):

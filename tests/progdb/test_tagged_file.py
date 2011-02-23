@@ -24,9 +24,11 @@ class TestTaggedFile(unittest.TestCase):
     self.assertTrue(tf.get_tags() != None)
 
     tf_tags = tf.get_tags()
+    self.assertTrue(len(tf_tags) != 0)
     op = find(tf_tags, lambda t: t[1] == "globalVariable")
-    self.assertTrue(op != None)
+    self.assertNotEqual(op, None)
     tag = tf.get_tag(op[0])
-    self.assertEqual(tag.type, CTAG_TYPE_VARIABLE)
-    tag.determine_line_number(tf.filename)
-    self.assertEqual(tag.line_number, 3)
+    self.assertTrue(tag.type in (CTAG_TYPE_VARIABLE, CTAG_TYPE_UNKNWON)) # depends on presence of exuberant-ctags
+    if tag.needs_determining:
+      tag.determine_line_number(tf.filename)
+    self.assertEqual(tag.line_number, 16)

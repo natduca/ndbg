@@ -36,8 +36,7 @@ from util.logging import *
 #  - quit needs to break any wait calls
 
 _deferred_event_queue = Queue.Queue()
-_cleanups = []
-_quit_hooks = []
+_cleanup_hooks = []
 _keyboard_interrupt_hooks = []
 _test_mode = False
 _quit_requested = False
@@ -85,12 +84,12 @@ class MessageLoop:
     return _test_mode
 
   @staticmethod
-  def add_cleanup(cb):
+  def add_cleanup_hook(cb):
     """
     Use a cleanup function to get rid of any stray objects, e.g. threads, that
     might have been left alive due to unexpected termination.
     """
-    _cleanups.append(cb)
+    _cleanup_hooks.append(cb)
 
   @staticmethod
   def add_message(cb,*args):
@@ -193,6 +192,8 @@ class MessageLoop:
     Runs the message queue until cb returns true.
     Raises a QuitException if MessageLoop.Quit is issued during waiting.
     """
+    if not callable(cb):
+      raise Exception("cb is not callable")
     if cb():
       return
     while not cb():
@@ -208,6 +209,8 @@ class MessageLoop:
     Runs the message queue while cb returns true.
     Raises a QuitException if MessageLoop.Quit is issued during waiting.
     """
+    if not callable(cb):
+      raise Exception("cb is not callable")
     if not cb():
       return
     while cb():
@@ -315,8 +318,8 @@ class MessageLoop:
     # fix the idle proc
     _idle_hook_enabled = False
 
-    # run cleanups
-    MessageLoop._run_cleanups()
+    # run cleanup_hooks
+    MessageLoop._run_cleanup_hooks()
 
     if len(_unhandled_exceptions):
       MessageLoop.print_unhandled_exceptions()
@@ -327,10 +330,10 @@ class MessageLoop:
     log1("MessageLoop: Shutdown of hooks complete.")
 
   @staticmethod
-  def _run_cleanups():
-    # run cleanups
-    log1("MessageLoop: running cleanups.")
-    cc = list(_cleanups) # copy them in case the cb changes
+  def _run_cleanup_hooks():
+    # run cleanup_hooks
+    log1("MessageLoop: running cleanup_hooks.")
+    cc = list(_cleanup_hooks) # copy them in case the cb changes
     for cb in cc:
       try:
         cb()
@@ -338,7 +341,7 @@ class MessageLoop:
         traceback.print_stack()
         traceback.print_exc()
 
-    del _cleanups[:]
+    del _cleanup_hooks[:]
 
   @staticmethod
   def run_no_gtk(idle_cb):
@@ -417,21 +420,20 @@ class MessageLoop:
     return _run_thread != None
 
   @staticmethod
-  def quit():
-    if not _run_thread:
+  def quit(intentionally_outside_main_loop=False):
+    if not _run_thread and not intentionally_outside_main_loop:
       raise Exception("Quit not valid outside run")
 
     global _quit_requested
     _quit_requested = True # break any message loops
-    for cb in _quit_hooks:
-      try:
-        cb()
-      except:
-        traceback.print_exc()
-    del _quit_hooks[:]
+
+    # run cleanup_hooks
 
     if _run_thread_is_gtk:
       gtk.main_quit()
+    elif intentionally_outside_main_loop:
+      MessageLoop._run_cleanup_hooks()
+
 
   @staticmethod
   def is_quit_requested():
@@ -456,10 +458,6 @@ class MessageLoop:
       print e
       print ""
 
-
-  @staticmethod
-  def add_quit_hook(cb):
-    _quit_hooks.append(cb)
 
   @staticmethod
   def add_keyboard_interrupt_hook(cb):
