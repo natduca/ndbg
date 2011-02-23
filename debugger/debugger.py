@@ -293,7 +293,10 @@ class Debugger(DebuggerBase):
     def fire_bkpt_changed():
       log1("Firing breakpoint %s hit", breakpoint)
       breakpoint.on_hit.fire()
-    self._run_on_status_break(fire_bkpt_changed)
+    if self.status == STATUS_BREAK:
+      fire_bkpt_changed()
+    else:
+      self._run_on_status_break(fire_bkpt_changed)
 
   def wait_for_status_break(self):
     def keep_waiting():
