@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
+from tempfile import *
+
 from util import *
 
 import socket
@@ -32,7 +34,28 @@ class TestAsyncIO(unittest.TestCase):
 
     x.read.add_listener(on_recv)
     x.closed.add_listener(on_close)
+    x.open()
     do_request()
     MessageLoop.run_until(lambda: x_closed.get())
     self.assertTrue(data_recvd.get())
 
+  def test_file(self):
+    f = NamedTemporaryFile(delete=False)
+    f.write("HelloWorld\n")
+    f.close()
+
+    x = AsyncIO(open(f.name,'r'))
+    rcvd_data = BoxedObject("")
+    did_close = BoxedObject(False)
+    def on_recv(b):
+      rcvd_data.set(rcvd_data.get() + b)
+    def on_close():
+      did_close.set(True)
+    x.read.add_listener(on_recv)
+    x.closed.add_listener(on_close)
+    x.open()
+    MessageLoop.run_until(lambda: x.is_closed)
+    self.assertTrue(did_close.get())
+    self.assertEquals(rcvd_data.get(), "HelloWorld\n")
+
+    os.unlink(f.name)

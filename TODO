@@ -1,7 +1,6 @@
 nResolved?
 ---------------------------------------------------------------------------
 - Stepping with two processes attached does not update the thread list or call stacks correctly (fixed?)
-- Hang on control-C (resolved?)
    
 
 On tap
