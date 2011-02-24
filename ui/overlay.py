@@ -33,7 +33,7 @@ class MainWindowOverlay(object):
 
   @staticmethod
   def _update_tab_prefs(settings,mw,layout):
-    log1("Updating prefs for layout %s", layout)
+#    log1("Updating prefs for layout %s", layout)
     import copy
     tab_panels = copy.deepcopy(settings.TabPanelAssignments)
     needs_commit = False
@@ -50,8 +50,8 @@ class MainWindowOverlay(object):
             if tab_panels[layout][tab.id] != panel.id:
               needs_commit = True
               
-          if needs_commit:
-            log2("%s: %s parent = %s",layout, tab.id, panel.id)
+#          if needs_commit:
+#            log2("%s: %s parent = %s",layout, tab.id, panel.id)
           tab_panels[layout][tab.id] = panel.id
     if needs_commit:
       settings.TabPanelAssignments = tab_panels
