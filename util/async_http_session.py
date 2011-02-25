@@ -49,7 +49,7 @@ class AsyncHTTPSession(object):
     if not self._found_header:
       self._cur_header += data
       idx = self._cur_header.find("\r\n\r\n")
-      if idx:
+      if idx != -1:
 #        print "header found"
         self._found_header = True
         content = self._cur_header[idx+4:]
