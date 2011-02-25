@@ -36,6 +36,7 @@ class AsyncFile(object):
     self._pending_cbs = deque()
     self._fake_on_read_pending = False
 
+    self._closed = Event()
     self._closing = False
     self._io.open() # keep this last, it will trigger callbacks...
 
@@ -61,8 +62,8 @@ class AsyncFile(object):
     if not self._fake_on_read_pending:
       self._fake_on_read_pending = True
       def fake_on_read():
-        self._fake_on_read_pending = False
         self._on_read(None)
+        self._fake_on_read_pending = False # set this here in case the on-read caues a readline
       MessageLoop.add_message(fake_on_read)
     else:
       pass
@@ -88,6 +89,8 @@ class AsyncFile(object):
           cb(self._cur_buffer)
           self._cur_buffer = ''
       self._io = None
+      self._closing = False
+      self._closed.fire() # truly closed
       while len(self._pending_cbs):
         cb = self._pending_cbs.popleft()
         cb(None)
@@ -98,7 +101,11 @@ class AsyncFile(object):
     self._closing = True
     self._on_read(None)
 
+  @property
+  def closed():
+    return self._closed
 
   @property
   def is_closed(self):
     return self._io == None
+
