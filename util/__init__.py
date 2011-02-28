@@ -25,7 +25,6 @@ from .timer import *
 from .settings import new_settings
 from .collections import *
 from .graph import *
-from .graph_widget import *
 from .message_loop import *
 from .waitable import *
 from .vec2 import *

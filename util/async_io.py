@@ -50,6 +50,9 @@ class AsyncIO(object):
   def write(self, data, on_write_cb = None):
     self._dispatcher._queue_write(data, on_write_cb)
 
+  def close(self):
+    raise Exception("Not implemented.")
+  
   @property
   def closed(self):
     return self._close

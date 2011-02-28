@@ -101,3 +101,6 @@ class AsyncHTTPSession(object):
   @property
   def closed(self):
     return self._closed
+
+  def close(self):
+    self._io.close()
