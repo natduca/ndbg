@@ -13,33 +13,26 @@
 # limitations under the License.
 import json
 from util import *
-
-class V8Connection(object):
-  def __init__(self):
-    iv = InterfaceValidator(self)
-    iv.expect_method("attach(self)")
-    iv.expect_method("detach(self)")
-    iv.expect_method("run_command_async(self, args, cb=None)")
-    iv.expect_get_property("closed")
+from v8_connection import *
 
 class V8Backend(object):
   def __init__(self, v8connection):
     self._next_seq = 0
-    assert isinstance(V8Connection)
+    assert isinstance(v8connection,V8Connection)
     self._connection = v8connection
-    self._connection.attach()
     self._connection.closed.add_listener(self._on_closed)
+    self._connection.attach()
 
     def drop(*args):
       pass
-    self.request("evaluate", {"expression": "1+1",
-                              "frame" : 0,
-                              "global" : True,
-                              "disable_break" : True}, drop)
+    self.run_v8_command("evaluate", {"expression": "1+1",
+                                     "frame" : 0,
+                                     "global" : True,
+                                     "disable_break" : True}, drop)
                               
 
   def _on_closed(self):
-    log("connection closed")
+    log1("connection closed")
     self._connection = None
 
   def run_v8_command(self, command, args, cb):

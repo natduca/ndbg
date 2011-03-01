@@ -18,27 +18,35 @@ from v8_connection import *
 class NodeV8Connection(V8Connection):
   def __init__(self, host, port):
     V8Connection.__init__(self)
+    self._host = host
+    self._port = port
+    self._closed = Event()
+    self._session = None
 
+  def attach(self):
     s = socket.socket()
-    s.connect((host, port))
+    s.connect((self._host, self._port))
     self._session = AsyncHTTPSession(s)
     self._session.closed.add_listener(self._on_close)
 
-    self._closed = Event()
-
-  def attach(self):
-    pass
+    got_handshake = BoxedObject(False)
+    def on_handshake(headers, content):
+      assert headers["Type"] == "connect"
+      assert headers["Protocol-Version"] == "1"
+      got_handshake.set(True)
+    self._session.request(None,None,on_handshake)
+    MessageLoop.run_until(lambda: got_handshake.get())
+    log1("Attached to V8.")
 
   def run_command_async(self, args, cb = None):
     def on_done(headers,content):
-      print "done: [%s] [%s]" % (headers, content)
+      print "node-done: [%s] [%s]" % (headers, content)
       if cb:
         cb()
     self._session.request({}, json.dumps(args), on_done)
 
   def _on_close(self):
-    print "node-v8: closed"
-    MessageLoop.quit()
+    log1("node-v8: closed")
     self._closed.fire()
 
   @property
