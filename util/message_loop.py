@@ -191,6 +191,22 @@ class MessageLoop:
     glib.timeout_add(timeout_ms, run_cb)
 
   @staticmethod
+  def wait_until(cb):
+    """
+    Waits until cb returns true. Cb can block
+    but only briefly.
+    Raises a QuitException if MessageLoop.Quit is issued during waiting.
+    """
+    if not callable(cb):
+      raise Exception("cb is not callable")
+    if cb():
+      return
+    while not cb():
+      if _quit_requested:
+        raise QuitException()
+      time.sleep(0.001)
+
+  @staticmethod
   def run_until(cb):
     """
     Runs the message queue until cb returns true.

@@ -14,6 +14,7 @@
 import asyncore
 from asynchat import async_chat
 import socket
+import threading
 
 from util import *
 
@@ -51,7 +52,9 @@ class AsyncIO(object):
     self._dispatcher._queue_write(data, on_write_cb)
 
   def close(self):
-    raise Exception("Not implemented.")
+    if not self._dispatcher:
+      raise Exception("Already closed.")
+    _IOThread.close(self._dispatcher)
   
   @property
   def closed(self):
@@ -102,10 +105,11 @@ class _AsyncIOFileDispatcher(asyncore.file_dispatcher):
         MessageLoop.add_message(self._pending_sends[0].cb)
         del self._pending_sends[0]
 
-  def handle_close(self):
+  def handle_close(self, dispatch_close=True):
     self._closed = True
     del self._pending_sends[:]
-    MessageLoop.add_message(self._handle._on_close)
+    if dispatch_close:
+      MessageLoop.add_message(self._handle._on_close)
 
 class _AsyncIOSocketDispatcher(asyncore.dispatcher):
   def __init__(self, handle, socket):
@@ -141,10 +145,16 @@ class _AsyncIOSocketDispatcher(asyncore.dispatcher):
         MessageLoop.add_message(self._pending_sends[0].cb)
         del self._pending_sends[0]
 
-  def handle_close(self):
+  def handle_close(self,dispatch_close=True):
     self._closed = True
     del self._pending_sends[:]
-    MessageLoop.add_message(self._handle._on_close)
+    if dispatch_close:
+      MessageLoop.add_message(self._handle._on_close)
+
+  def close(self):
+    if not self._dispatcher:
+      raise Exception("Already closed.")
+    _IOThread.close(self._dispatcher)
 
 
 class _IOThread(WellBehavedThread):
@@ -160,8 +170,28 @@ class _IOThread(WellBehavedThread):
     WellBehavedThread.__init__(self, "IOThread", self._idle)
 
   @staticmethod
+  def _blocking_call_on_iothread(cb,*args):
+    done = BoxedObject(False)
+    retval = BoxedObject(None)
+    done_cond = threading.Condition()
+    def run_on_iothread():
+      rv = cb(*args)
+      retval.set(rv)
+      done_cond.acquire()
+      done_cond.notify()
+      done_cond.release()
+      done.set(True)
+    _IOThread.get().add_message(run_on_iothread)
+    done_cond.acquire()
+    def is_done():
+      done_cond.wait(0.01)
+      return done.get()
+    MessageLoop.wait_until(is_done)
+    done_cond.release()
+    return retval.get()
+
+  @staticmethod
   def open(h,f):
-    done = BoxedObject()
     def create_dispatcher():
       if isinstance(f,socket.socket):
         dispatcher = _AsyncIOSocketDispatcher(h, f)
@@ -169,10 +199,15 @@ class _IOThread(WellBehavedThread):
         dispatcher = _AsyncIOFileDispatcher(h, f)
       else:
         raise Exception("unrecognized f")
-      done.set(dispatcher)
-    _IOThread.get().add_message(create_dispatcher)
-    MessageLoop.run_until(lambda: done.get())
-    return done.get()
+      return dispatcher
+    return _IOThread._blocking_call_on_iothread(create_dispatcher)
+
+  @staticmethod
+  def close(dispatcher):
+    def close_on_iothread():
+      dispatcher.handle_close(False)
+    dispatcher._handle._on_close()
+    _IOThread._blocking_call_on_iothread(close_on_iothread)
 
   def _idle(self):
 #    log2("poll")
