@@ -108,7 +108,6 @@ class _AsyncIOFileDispatcher(asyncore.file_dispatcher):
   def handle_close(self, dispatch_close=True):
     self._closed = True
     del self._pending_sends[:]
-    b()
     if dispatch_close:
       MessageLoop.add_message(self._handle._on_close)
 

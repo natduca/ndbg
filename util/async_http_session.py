@@ -108,7 +108,6 @@ class AsyncHTTPSession(object):
     cb(headers, content)
 
   def _on_close(self):
-    b()
     log1("closed");
     self._io = None
     self._closed.fire()
