@@ -18,8 +18,6 @@ from cStringIO import StringIO
 
 from util import *
 
-
-
 class AsyncFile(object):
   def __init__(self, f, mode = None):
     if isinstance(f, str):
