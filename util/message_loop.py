@@ -15,7 +15,8 @@ try:
   import glib
   import gtk
 except:
-  pass
+  gtk = None
+  glib = None
 
 import Queue
 import traceback
@@ -271,7 +272,9 @@ class MessageLoop:
       MessageLoop._run_until_empty()
       MessageLoop._run_pending_messages()
       return _idle_hook_enabled
-    glib.idle_add(on_idle)
+
+    if gtk:
+      glib.idle_add(on_idle)
 
     # install exception hook
     global _original_excepthook

@@ -14,44 +14,35 @@
 import json
 from util import *
 
-RESULT_CODE_OK = 0
-RESULT_ILLEGAL_TAB_STATE = 1
-RESULT_UNKNOWN_TAB = 2
-RESULT_DEBUGGER_ERROR = 3
-RESULT_UNKNOWN_COMMAND = 4
-
-def _result_code_to_string(code) {
-  map = {
-    0 : "RESULT_CODE_OK",
-    1 : "RESULT_ILLEGAL_TAB_STATE",
-    2 : "RESULT_UNKNOWN_TAB",
-    3 : "RESULT_DEBUGGER_ERROR",
-    4 : "RESULT_UNKNOWN_COMMAND"
-    }
-  return map[code]
-}
-
-class V8Session(object):
+class V8Connection(object):
   def __init__(self):
     iv = InterfaceValidator(self)
     iv.expect_method("attach(self)")
     iv.expect_method("detach(self)")
-    iv.expect_method("run_command_async(self, args, cb)")
+    iv.expect_method("run_command_async(self, args, cb=None)")
     iv.expect_get_property("closed")
 
 class V8Backend(object):
-  def __init__(self, v8session):
+  def __init__(self, v8connection):
     self._next_seq = 0
-    assert isinstance(v8session,V8session)
-    self._session = v8session
-    self._session.attach()
-    self._session.closed.add_listener(self._on_closed)
+    assert isinstance(V8Connection)
+    self._connection = v8connection
+    self._connection.attach()
+    self._connection.closed.add_listener(self._on_closed)
+
+    def drop(*args):
+      pass
+    self.request("evaluate", {"expression": "1+1",
+                              "frame" : 0,
+                              "global" : True,
+                              "disable_break" : True}, drop)
+                              
 
   def _on_closed(self):
-    log("session closed")
-    self._session = None
+    log("connection closed")
+    self._connection = None
 
-  def request(self, command, args, cb):
+  def run_v8_command(self, command, args, cb):
     this_seq = self._next_seq
     self._next_seq += 1
     v8cmd = {
@@ -60,26 +51,8 @@ class V8Backend(object):
         "command" : command,
         "arguments" : args
         }
-    self._session.run_command_async(v8cmd, cb)
+    self._connection.run_command_async(v8cmd, cb)
 
   def _on_close(self):
     print "v8: closed"
     MessageLoop.quit()
-
-
-if __name__ == "__main__":
-  set_loglevel(2)
-  def init(*args):
-    try:
-      be = ChromeV8Backend(*args)
-    except:
-      import traceback; traceback.print_exc();
-      MessageLoop.quit()
-
-
-  # for chrome, launch with chrome --remote-shell-port
-  import sys
-  MessageLoop.add_message(init, "localhost", int(sys.argv[1]), int(sys.argv[2]))
-#  MessageLoop.add_message(init, "localhost", 5858)
-  MessageLoop.run_no_gtk(lambda: False)
-  print "main done"

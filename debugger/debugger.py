@@ -34,8 +34,6 @@ from gdb_backend import GdbBackend, GDB_STATUS_BREAK, GDB_STATUS_RUNNING
 from gdb_parsers import GdbPhraseMatcher
 from dpassive_process import *
 
-import ui
-
 class Debugger(DebuggerBase):
   def __init__(self,use_multiple_gdb_backends_override=False):
     DebuggerBase.__init__(self)

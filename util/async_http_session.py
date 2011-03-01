@@ -26,9 +26,7 @@ class AsyncHTTPSession(object):
     self._io = AsyncIO(s)
 
     self._io.read.add_listener(self._on_read)
-    self._io.close.add_listener(self._on_close)
-
-    self._io.open()
+    self._io.closed.add_listener(self._on_close)
 
     self._found_header = False
     self._cur_header = ""
@@ -36,6 +34,8 @@ class AsyncHTTPSession(object):
     self._cur_headers = None
 
     self._pending_request_cbs = deque()
+
+    self._io.open()
 
   def request(self, headers, text, cb):
     header = "\r\n".join(["%s:%s" % (x, headers[x]) for x in headers])

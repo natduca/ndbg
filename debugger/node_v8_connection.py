@@ -13,19 +13,16 @@
 # limitations under the License.
 import json
 from util import *
-from v8_backend import V8Session
+from v8_connection import *
 
-
-class NodeV8Session(V8Session):
-  def __init__(self, host, port, tab_id):
-    V8Session.__init__(self)
-    self._next_seq = 0
-    self._tab_id = tab_id
+class NodeV8Connection(V8Connection):
+  def __init__(self, host, port):
+    V8Connection.__init__(self)
 
     s = socket.socket()
     s.connect((host, port))
     self._session = AsyncHTTPSession(s)
-    self._session.closed.add_event_listener(self._on_close)
+    self._session.closed.add_listener(self._on_close)
 
     self._closed = Event()
 
@@ -44,7 +41,7 @@ class NodeV8Session(V8Session):
     MessageLoop.quit()
     self._closed.fire()
 
-  @propety
+  @property
   def closed(self):
     return self._closed
 
@@ -56,15 +53,15 @@ if __name__ == "__main__":
   set_loglevel(2)
   def init(*args):
     try:
-      session = NodeV8Session(*args)
+      conn = NodeV8Connection(*args)
       import v8_backend
-      v8_backend.V8Backend(session)
+      v8_backend.V8Backend(conn)
     except:
       import traceback; traceback.print_exc();
       MessageLoop.quit()
 
   # for chrome, launch with chrome --remote-shell-port
   import sys
-  MessageLoop.add_message(init, "localhost", int(sys.argv[1]), int(sys.argv[2]))
+  MessageLoop.add_message(init, sys.argv[1], int(sys.argv[2]))
   MessageLoop.run_no_gtk(lambda: False)
   print "main done"
