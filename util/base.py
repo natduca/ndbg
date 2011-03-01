@@ -13,6 +13,10 @@
 # limitations under the License.
 import types
 import pickle
+try:
+  import gtk
+except:
+  gtk = None
 
 class DynObject(object):
   def __init__(self,dict=None):
