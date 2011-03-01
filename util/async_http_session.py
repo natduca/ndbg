@@ -18,17 +18,21 @@ from cStringIO import StringIO
 
 from util import *
 
-
+_DEBUG = False
 
 class AsyncHTTPSession(object):
+  @staticmethod
+  def set_debug(dbg):
+    dbg = dbg or False
+    global _DEBUG
+    _DEBUG = dbg
+
   def __init__(self, s):
     self._closed = Event()
     self._io = AsyncIO(s)
 
     self._io.read.add_listener(self._on_read)
-    self._io.close.add_listener(self._on_close)
-
-    self._io.open()
+    self._io.closed.add_listener(self._on_close)
 
     self._found_header = False
     self._cur_header = ""
@@ -37,15 +41,25 @@ class AsyncHTTPSession(object):
 
     self._pending_request_cbs = deque()
 
+    self._io.open()
+
   def request(self, headers, text, cb):
-    header = "\r\n".join(["%s:%s" % (x, headers[x]) for x in headers])
-    header += "\r\nContent-Length:%i\r\n" % (len(text))
-    header += "\r\n"
-#    print "send[%s]" % (header + text)
-    self._pending_request_cbs.append(cb)
-    self._io.write(header + text)
+    if headers == None and text == None:
+      """Way to trap an unsolicited response."""
+      self._pending_request_cbs.append(cb)
+    else:
+      header = "\r\n".join(["%s:%s" % (x, headers[x]) for x in headers])
+      header += "\r\nContent-Length:%i\r\n" % (len(text))
+      header += "\r\n"
+    #    print "send[%s]" % (header + text)
+      self._pending_request_cbs.append(cb)
+      if _DEBUG:
+        log0("request: [%s]" % (header + text))
+      self._io.write(header + text)
 
   def _on_read(self, data):
+    if _DEBUG:
+      log0("read: [%s]" % data)
     if not self._found_header:
       self._cur_header += data
       idx = self._cur_header.find("\r\n\r\n")
@@ -101,3 +115,6 @@ class AsyncHTTPSession(object):
   @property
   def closed(self):
     return self._closed
+
+  def close(self):
+    self._io.close()

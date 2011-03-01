@@ -22,7 +22,6 @@ def _result_code_to_string(code) {
 class ChromeV8Session(V8Session):
   def __init__(self, host, port, tab_id):
     V8Session.__init__(self)
-    self._next_seq = 0
     self._tab_id = tab_id
 
     s = socket.socket()

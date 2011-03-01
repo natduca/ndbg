@@ -13,8 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pygtk
-pygtk.require('2.0')
+try:
+  import pygtk
+  pygtk.require('2.0')
+except:
+  pygtk = None
+
 import sys
 import os
 import re
@@ -28,8 +32,12 @@ import signal
 
 
 from util import *
-import ui
-from ui.main_control_launcher import *
+
+try:
+  import ui
+  from ui.main_control_launcher import *
+except:
+  ui = None
 
 def _onsig_USR1(signum, frame):
   print "SIGUSR1 recieved."

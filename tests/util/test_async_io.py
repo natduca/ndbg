@@ -40,6 +40,18 @@ class TestAsyncIO(unittest.TestCase):
     MessageLoop.run_until(lambda: x_closed.get())
     self.assertTrue(data_recvd.get())
 
+  def test_socket_close(self):
+    s = socket.socket()
+    s.connect(('google.com', 80))
+    x = AsyncIO(s)
+    x_closed = BoxedObject(False)
+    def on_close():
+      x_closed.set(True)
+    x.closed.add_listener(on_close)
+    x.open()
+    x.close()
+    self.assertTrue(x.is_closed)
+
   def test_file(self):
     f = NamedTemporaryFile(delete=False)
     f.write("HelloWorld\n")
@@ -76,3 +88,21 @@ class TestAsyncIO(unittest.TestCase):
     MessageLoop.run_until(lambda: x.is_closed)
     self.assertTrue(did_close.get())
     self.assertEquals(rcvd_data.get(), "314159\n")
+
+  def test_file_close(self):
+    f = NamedTemporaryFile(delete=False)
+    f.write("HelloWorld\n")
+    f.close()
+
+    x = AsyncIO(open(f.name,'r'))
+    rcvd_data = BoxedObject("")
+    did_close = BoxedObject(False)
+    def on_close():
+      did_close.set(True)
+    x.closed.add_listener(on_close)
+    x.open()
+    x.close()
+    self.assertTrue(x.is_closed)
+    self.assertTrue(did_close.get())
+
+    os.unlink(f.name)

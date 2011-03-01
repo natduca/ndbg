@@ -78,7 +78,12 @@ def do_run(testnames = None):
   """
   immediate = _debug_mode
   MessageLoop.set_in_test_mode(True)
-  dirs = ["tests", "tests/util", "tests/debugger", "tests/ui", "tests/progdb"]
+  dirs = ["tests", "tests/util", "tests/debugger", "tests/progdb"]
+  try:
+    import ui
+    dirs.append("tests/ui")
+  except:
+    pass
   v = 2
   r = unittest.TextTestRunner(verbosity=v)
   l = unittest.TestLoader()
