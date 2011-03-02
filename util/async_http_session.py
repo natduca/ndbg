@@ -49,7 +49,9 @@ class AsyncHTTPSession(object):
       self._pending_request_cbs.append(cb)
     else:
       header = "\r\n".join(["%s:%s" % (x, headers[x]) for x in headers])
-      header += "\r\nContent-Length:%i\r\n" % (len(text))
+      if len(header):
+        header += "\r\n"
+      header += "Content-Length:%i\r\n" % (len(text))
       header += "\r\n"
     #    print "send[%s]" % (header + text)
       self._pending_request_cbs.append(cb)
