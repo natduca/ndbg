@@ -11,8 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import glib
-import gtk
+try:
+  import glib
+  import gtk
+except:
+  gtk = None
+  glib = None
 
 import Queue
 import traceback
@@ -187,6 +191,22 @@ class MessageLoop:
     glib.timeout_add(timeout_ms, run_cb)
 
   @staticmethod
+  def wait_until(cb):
+    """
+    Waits until cb returns true. Cb can block
+    but only briefly.
+    Raises a QuitException if MessageLoop.Quit is issued during waiting.
+    """
+    if not callable(cb):
+      raise Exception("cb is not callable")
+    if cb():
+      return
+    while not cb():
+      if _quit_requested:
+        raise QuitException()
+      time.sleep(0.001)
+
+  @staticmethod
   def run_until(cb):
     """
     Runs the message queue until cb returns true.
@@ -268,7 +288,9 @@ class MessageLoop:
       MessageLoop._run_until_empty()
       MessageLoop._run_pending_messages()
       return _idle_hook_enabled
-    glib.idle_add(on_idle)
+
+    if gtk:
+      glib.idle_add(on_idle)
 
     # install exception hook
     global _original_excepthook

@@ -1,13 +1,14 @@
 nResolved?
 ---------------------------------------------------------------------------
 - Stepping with two processes attached does not update the thread list or call stacks correctly (fixed?)
-- Hang on control-C (resolved?)
    
 
 On tap
 ---------------------------------------------------------------------------
 
 - Launch program from debug menu doesn't work
+
+- File resolution doesn't work when gdb spits out relative paths [node reports things like ../src/foo.js]
 
 - Persist panels on standalone windows
 - Ctrl-x control-c of editor when running raises an exception

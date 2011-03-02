@@ -11,12 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import pygtk
-pygtk.require('2.0')
-import gtk
-import glib
 import types
 import pickle
+try:
+  import gtk
+except:
+  gtk = None
 
 class DynObject(object):
   def __init__(self,dict=None):
