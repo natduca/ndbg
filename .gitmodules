@@ -1,3 +1,6 @@
 [submodule "third_party/node"]
 	path = third_party/node
 	url = https://github.com/joyent/node.git
+[submodule "third_party/flexmock"]
+	path = third_party/flexmock
+	url = https://github.com/has207/flexmock.git
