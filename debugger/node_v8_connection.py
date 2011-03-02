@@ -35,14 +35,16 @@ class NodeV8Connection(V8Connection):
       assert headers["Protocol-Version"] == "1"
       got_handshake.set(True)
     self._session.request(None,None,on_handshake)
+    log1("Waiting for V8 handshake")
     MessageLoop.run_until(lambda: got_handshake.get())
     log1("Attached to V8.")
 
   def run_command_async(self, args, cb = None):
     def on_done(headers,content):
-      print "node-done: [%s] [%s]" % (headers, content)
+      print "command done: [%s]" % (content)
+      obj = json.loads(content)
       if cb:
-        cb()
+        cb(obj)
     self._session.request({}, json.dumps(args), on_done)
 
   def _on_close(self):
