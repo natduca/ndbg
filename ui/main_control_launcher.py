@@ -149,9 +149,11 @@ class MainControlLauncher(dbus.service.Object):
 
   @dbus.service.method(dbus_interface="ndbg.Launcher")
   def notify_of_attach(self, proc_id):
-    log1("%s attached to %s: ",  proc.mc, proc_id)
+    proc = find_first(self._passive_processes, lambda proc: proc.id == proc_id)
+    log1("attached to %s: ",  proc.mc, proc_id)
     for proc in self._passive_processes:
-      proc.mc.remove_passive_process(proc)
+      if proc.id != proc_id:
+        proc.mc.remove_passive_process(proc.id)
 
   # general infrastructural crap
   ###########################################################################

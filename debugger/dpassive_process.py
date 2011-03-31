@@ -48,10 +48,12 @@ class DPassiveProcess(object):
     return self._backend_info
 
   def attach(self):
+    log1("Begin attach to pid %i %s", self.pid, type(self.pid))
     debugger = self._debugger# save because attach_cb may detach the process
     if self._attach:
       self._attach()
     debugger.passive_processes.remove(self)
+    log1("Begin attach to pid %i, phase 2", self.pid)
     debugger.begin_attach_to_pid(self.pid, self._was_launched)
 
   @property

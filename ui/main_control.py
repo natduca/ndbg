@@ -651,7 +651,7 @@ class MainControl(dbus.service.Object):
     self._next_launcher_id = 0
     self._launchable_processes_by_launcher_id = {}
     self._passive_processes_by_launcher_id = {}
-    
+
   @dbus.service.method(dbus_interface='ndbg.MainControl', sender_keyword="sender")
   def add_launchable_process(self, cmdline, sender):
     launcher = dbus.SessionBus().get_object(sender, "/Launcher")
@@ -665,6 +665,7 @@ class MainControl(dbus.service.Object):
     log1("Add launchable process for %s", cmdline)
     def on_launch():
       launcher.on_accept_launch(id)
+      del self._launchable_processes_by_launcher_id[id]
     def on_ignore_launch():
       launcher.on_ignore_launch(id)
     def on_detach():
@@ -680,17 +681,17 @@ class MainControl(dbus.service.Object):
         print "getting launcher pid"
         launcher_pid.set(launcher.get_pid())
         MessageLoop.add_delayed_message(check_launcher_aliveness, 250)
+
       if not self._launchable_processes_by_launcher_id.has_key(id):
         return False
 
       if not ProcessUtils.is_proc_alive(launcher_pid.get()):
         log1("Launchable process host %s gone. Removing launched process.", id)
         del self._launchable_processes_by_launcher_id[id]
-        self._debugger.launchable_processes.remove(proc)
+        if proc in self._debugger.launchable_processes:
+          self._debugger.launchable_processes.remove(proc)
         return False
       return True
-
-
     MessageLoop.add_message(check_launcher_aliveness)
 
     # return the id of this process
@@ -703,7 +704,7 @@ class MainControl(dbus.service.Object):
     launched_pid = int(launched_pid)
     log1("on_accept_launch_complete(%i)", launched_pid);
     self._attach_to_pids([launched_pid])
-    
+
 
   @dbus.service.method(dbus_interface='ndbg.MainControl', sender_keyword="sender")
   def remove_launchable_process(self, id, sender):
@@ -717,6 +718,7 @@ class MainControl(dbus.service.Object):
   def add_passive_process(self, pid, was_launched, sender):
     launcher = dbus.SessionBus().get_object(sender, "/Launcher")
 
+    pid = int(pid)
     id = "%s/%s" % (dbus.SessionBus().get_unique_name(), self._next_launcher_id)
     self._next_launcher_id += 1
 
