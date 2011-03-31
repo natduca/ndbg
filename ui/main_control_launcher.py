@@ -95,7 +95,7 @@ class MainControlLauncher(dbus.service.Object):
   def on_ignore_launch(self, proc_id):
     log1("LaunchableProcess ignored by %s" % proc_id)
     remove_first(self._launchable_processes, lambda proc: proc.id == proc_id)
-    if len(self._open_bars) == 0 and self._proc == None:
+    if len(self._launchable_processes) == 0 and self._proc == None:
       MessageLoop.add_message(self._on_all_mcs_ignore_launchable)
 
   @dbus.service.method(dbus_interface="ndbg.Launcher")
@@ -149,7 +149,6 @@ class MainControlLauncher(dbus.service.Object):
 
   @dbus.service.method(dbus_interface="ndbg.Launcher")
   def notify_of_attach(self, proc_id):
-    proc = find_first(self._open_bars, lambda proc: b.id == proc_id)
     log1("%s attached to %s: ",  proc.mc, proc_id)
     for proc in self._passive_processes:
       proc.mc.remove_passive_process(proc)
