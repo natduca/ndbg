@@ -16,8 +16,20 @@ On tap
 
 - Emacs editor - save the mark we create so we can remove the icon correctly when edits occur
 
-- Hang when process fails to launch. No explanation of what failed.
+- Handling of failures during launch & attach
+  - missing symbols when causes launch to fail
+  - Hang when process fails to launch. No explanation of what failed.
   - Rename Waitable to Task. Make passing an error cb mandatory to all tasks
+
+- Add test cases for launching programs with breakpoints already added. Wierd exceptions manifesting.
+
+- Better indication of stopped reason; not always focusing stopped line
+
+- Better indication of launch failure
+
+- Cant start ui when executable doesn't exist
+
+- progdb doesnt do anythign when only passive processes are avaialble
 
 - Emacs: reverting a buffer with marks in it leads to the same mark there two times
 
