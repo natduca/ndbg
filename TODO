@@ -1,7 +1,6 @@
 nResolved?
 ---------------------------------------------------------------------------
 - Stepping with two processes attached does not update the thread list or call stacks correctly (fixed?)
-   
 
 On tap
 ---------------------------------------------------------------------------
@@ -123,8 +122,6 @@ Breakpoint tab
  - Implement enable/disable
  - Run-to-current (tbrk)
 
- - Move breakpoints when things are edited
-
 
 EditorBase
 ---------------------------------------------------------------------------
@@ -137,19 +134,14 @@ ProgDB/QuickOpen
 - Quickopen slow to catch up to user input, clobbers
 - Quickopens hould keep selected item selected when data changes
 
- - Right click on file in quickopen and pick "ignore <extension>" and it will get added to extension
+- Right click on file in quickopen and pick "ignore <extension>" and it will get added to extension
+
 - Quick find dialog: Sort file hits by directory distance to the currently selected files
 
 - Make GotoMethoDialog use asyncrequest
-- Replace GotoMethodDialog with a GotoMethodPopup
 
+- Add search directories for 
 - Symbol browsing using dwarf
-
-
-EmacsEditor
----------------------------------------------------------------------------
-- Lingering focus issues with emacs
-- Use overlay-arrow for current line
 
 
 Watch/interactive window
@@ -171,35 +163,20 @@ Output window
 
 Debugger
 ---------------------------------------------------------------------------
+- Processes on other hosts
+
 - Implement the _not_implemented interactive commands
 
 - Skip functions of specified names when stepping [e.g. step through ->'s, width(), etc calls]
-
 - Follow forks [via breakpoint on fork, replace with clone?]
 
+- Unicode and prettyprinters?
 
 SourceViewEditor
 - Close source tab hotkey [control w]
-- Control-L to center the cursor onscreen
-
 
 
 Other
 ---------------------------------------------------------------------------
-- Step through this entire method, logging all function arguments
-  Allow viewing of call history after-the-fact [and eventually diffing]
-- Tasks that are enqueued; tasks that are running
-
-- Copy & paste of sub-rows in watch expression
-- Complex visualizers [gui for exploring the render tree] [right in the c++ code?]
-
-- Remote debugging
-
-
-- Cross-step
-- Tracing [task debugging]
-
 - Support for non-C++ backend?
 
-
-- Unicode and prettyprinters?
