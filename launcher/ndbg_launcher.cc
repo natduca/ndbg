@@ -16,27 +16,27 @@
 #include <string.h>
 #include <unistd.h>
 
-int __is_ndb_launcher_waiting = 1;
+int __is_ndbg_launcher_waiting = 1;
 
 void wait_for_debugger() {
-  fprintf(stderr, "ndb_launcher: pid %i is waiting for ndb's arrival\n", getpid());
+  fprintf(stderr, "ndbg_launcher: pid %i is waiting for ndbg's arrival\n", getpid());
 
-  while(__is_ndb_launcher_waiting) {
+  while(__is_ndbg_launcher_waiting) {
     usleep(1000*30);
   }
 }
 
 int main(int argc, char** argv) {
   if(argc < 2) {
-    fprintf(stderr, "ndb_launcher requires at least one argument.");
+    fprintf(stderr, "ndbg_launcher requires at least one argument.");
     return EXIT_FAILURE;
   }
 
-   // wait for ndb to attach
+   // wait for ndbg to attach
   wait_for_debugger();
 
   // build execv argument
-  fprintf(stderr, "ndb_launcher args: \n");
+  fprintf(stderr, "ndbg_launcher args: \n");
   char** new_argv = new char*[argc];
   for(int i = 1; i < argc; ++i) {
     fprintf(stderr, "  arg%2i: %s\n", i, argv[i]);
@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
   new_argv[argc-1] = NULL;
 
   // do execv
-  fprintf(stderr, "ndb_launcher: execvp(%s)\n", argv[1]);
+  fprintf(stderr, "ndbg_launcher: execvp(%s)\n", argv[1]);
   int ret = execvp(argv[1], new_argv);
   delete [] new_argv;
   if(ret == -1)
