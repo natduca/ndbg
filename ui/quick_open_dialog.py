@@ -172,7 +172,8 @@ class QuickOpenDialog(gtk.Dialog):
       log2("Model update time: %0.3fms" % (elapsed * 1000))
 
       if len(self._model) > 0:
-        self._treeview.get_selection().select_path((0,))
+        if self._treeview.get_selection():
+          self._treeview.get_selection().select_path((0,))
 
     if self._settings.QuickOpenDialog_FilterText != "":
       ft = str(self._settings.QuickOpenDialog_FilterText)
