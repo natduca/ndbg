@@ -151,6 +151,7 @@ class Resources(object):
       MenuItemResource('debug.attach_to_process', "_Attach to proces...", 'P', gtk.gdk.CONTROL_MASK | gtk.gdk.MOD1_MASK | gtk.gdk.SHIFT_MASK),
       MenuItemResource('debug.end_debugging', "_End debugging", 'F5', gtk.gdk.SHIFT_MASK),
       MenuItemResource('debug.run_primary_executable', "Run", "F5", 0),
+      MenuItemResource('debug.run_primary_executable_suspended', "_Run (suspended)...", 'F10', 0),
 
       MenuItemResource('tools.options', "_Options...", None, 0),
 

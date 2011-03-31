@@ -180,6 +180,8 @@ class MainControl(dbus.service.Object):
     # previous debugging
     settings.register("RunPrimaryExecutableMode", str, "active")
     self._when_not_debugging_overlay.add_debug_menu_item('debug.run_primary_executable', lambda *args: self._run_primary_executable())
+    self._when_not_debugging_overlay.add_debug_menu_item('debug.run_primary_executable_suspended', lambda *args: self._run_primary_executable_suspended())
+
     self._primary_executable = None
 
     # event listening
@@ -268,6 +270,22 @@ class MainControl(dbus.service.Object):
       self._run_primary_executable_active(suspended)
     elif self.settings.RunPrimaryExecutableMode == "passive":
       self._run_primary_executable_passive()
+    else:
+      raise Exception("Unrecognized rerun mode.")
+
+  def _run_primary_executable_suspended(self):
+    if self.settings.RunPrimaryExecutableMode == "active":
+      self._run_primary_executable_active(True)
+    elif self.settings.RunPrimaryExecutableMode == "passive":
+      b = ButterBar("You have passive debugging selected. Debugging process anyway...")
+      b.set_stock_icon(gtk.STOCK_DIALOG_INFO)
+      b.add_close_button()
+      self.butter_bar_collection.add_bar(b)
+      def autoclose():
+        if b.get_parent():
+          self.butter_bar_collection.close_bar(b)
+      MessageLoop.add_delayed_message(autoclose, 5000)
+      self._run_primary_executable_active(True)
     else:
       raise Exception("Unrecognized rerun mode.")
 
@@ -741,4 +759,3 @@ class MainControl(dbus.service.Object):
   def remove_passive_process(self, id):
     proc = self._passive_processes_by_launcher_id[id]
     self._debugger.passive_processes.remove(proc)
-
