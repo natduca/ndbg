@@ -18,16 +18,13 @@ from .main_window_base import MainWindowBase
 from .main_control_base import MainControlBase
 from .resources import Resources
 
-# our imports
-from util import *
+# our imports needed for implementing run()
+from util import MessageLoop
 import ndbg
 from .platform import MainWindow, MainControl
 
 _running = False
 _mc = None
-
-def __init__():
-  print "UI module initialized"
 
 def run(settings, load_cb=None):
   global _running
