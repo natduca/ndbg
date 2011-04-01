@@ -31,7 +31,6 @@ import dbus.service
 
 from util import *
 
-from main_window import MainWindow
 from resources import Resources
 
 from call_stack_tab import CallStackTab
@@ -57,7 +56,7 @@ UI_LAYOUT_EDIT = "UIEditMode"
 UI_LAYOUT_RUN  = "UIRunMode"
 
 
-class MainControl(dbus.service.Object):
+class MainControlBase(dbus.service.Object):
   mw = property(lambda self: self._mw)
   always_overlay = property(lambda self: self._always_overlay)
   when_not_debugging_overlay = property(lambda self: self._when_not_debugging_overlay)
