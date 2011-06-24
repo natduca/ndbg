@@ -118,7 +118,7 @@ class Resources(object):
              MenuResource("main_menu.file", "_File"),
              EmacsEditor = MenuResource("main_menu.file", "File")),
       MenuItemResource("main_menu.file.exit", "E_xit", None, 0),
-      MenuResource("main_menu.tabs", "T_abs"),
+      MenuResource("main_menu.tabs", "Tabs"),
       MenuResource("main_menu.tools", "_Tools"),
       argsel(settings.Editor,
              MenuResource("main_menu.debug", "_Debug"),

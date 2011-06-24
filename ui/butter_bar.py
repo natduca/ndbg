@@ -151,7 +151,7 @@ class ButterBarCollection(gtk.VBox):
       sep = _BSeparator()
       grp.pack_start(sep)
     grp.pack_start(bar)
-    self.pack_start(grp)
+    self.pack_end(grp)
     grp.show_all()
     self._num_bars += 1
 
@@ -176,6 +176,7 @@ if __name__ == "__main__" and False:
 if __name__ == "__main__" and True:
   w = gtk.Window()
   w.set_size_request(400,-1)
+  vb = gtk.VBox()
   bbc = ButterBarCollection()
 
   # bb1
@@ -199,6 +200,8 @@ if __name__ == "__main__" and True:
   bb.add_close_button(lambda: True)
   bbc.add_bar(bb)
 
-  w.add(bbc)
+  vb.pack_start(bbc,False,False)
+  vb.pack_start(gtk.Label(),True,True)
+  w.add(vb)
   w.show_all()
   gtk.main()

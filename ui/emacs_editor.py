@@ -278,8 +278,12 @@ As a nDBG user, you have two options:
     args = ["emacsclient", "-s", self._emacs_socket_name, "-e", cmd]
     return self.remote_run_ary(args)
 
-  def remote_run(self,cmd,silent=False):
+  def remote_run_sync(self,cmd,silent=False):
     args=shlex.split("emacsclient -s %s %s" % (self._emacs_socket_name, cmd))
+    return self.remote_run_ary(args,silent)
+
+  def remote_run(self,cmd,silent=False):
+    args=shlex.split("emacsclient -n -s %s %s" % (self._emacs_socket_name, cmd))
     return self.remote_run_ary(args,silent)
 
   def push_remote_cmd(self, cmd):
@@ -328,7 +332,7 @@ As a nDBG user, you have two options:
   def get_current_location(self):
     self._flush_pending_cmds()
     # filename
-    filename = self.remote_run("--e '(buffer-file-name (window-buffer (selected-window))))'").strip()
+    filename = self.remote_run_sync("--e '(buffer-file-name (window-buffer (selected-window))))'").strip()
     if filename == None:
       raise NoCurrentLocationException("A non-file is selected currently.")
     if filename[0] != '"' or filename[-1] != '"':
@@ -337,7 +341,7 @@ As a nDBG user, you have two options:
     log2("Got %s from emacs for current buffer", filename)
 
     # lineno
-    line_no_str = self.remote_run("-e '(with-current-buffer (window-buffer (selected-window)) (line-number-at-pos))'")
+    line_no_str = self.remote_run_sync("-e '(with-current-buffer (window-buffer (selected-window)) (line-number-at-pos))'")
     line_no = int(line_no_str)
 
     fh = self.mc.filemanager.find_file(filename)
@@ -455,4 +459,3 @@ if __name__ == "__main__":
   w.show_all()
   MessageLoop.add_cleanup_hook(lambda: ed.destroy())
   MessageLoop.run()
-

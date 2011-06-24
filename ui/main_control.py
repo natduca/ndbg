@@ -593,7 +593,7 @@ class MainControl(dbus.service.Object):
       proc.ignore_launch()
 
     b.add_button("_Accept and Launch", on_accept)
-    b.add_button("_Ignore", on_ignore)
+    b.add_button("Ignor_e", on_ignore)
     b.add_close_button(on_ignore)
     self._butter_bars_by_process[proc] = b
     self.butter_bar_collection.add_bar(b)
@@ -626,7 +626,7 @@ class MainControl(dbus.service.Object):
     MessageLoop.add_delayed_message(on_ignore_or_timeout, 5000)
 
     b.add_button("_Attach", on_accept)
-    b.add_button("_Ignore", on_ignore_or_timeout)
+    b.add_button("Ignor_e", on_ignore_or_timeout)
     b.add_close_button(on_ignore_or_timeout)
 
     self._butter_bars_by_process[proc] = b
