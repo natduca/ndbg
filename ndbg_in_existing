@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import sys
-sys.argv.insert(1, '--args')
+if len(sys.argv) > 2:
+  sys.argv.insert(1, '--args')
 sys.argv.insert(1, '--existing')
 print sys.argv
 
