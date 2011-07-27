@@ -154,6 +154,10 @@ def launch_in_existing(options, args):
 
 
 def run_ui(options, args):
+  if not ui:
+    print "Cannot run UI.\n"
+    return 0
+
   settings = new_settings()
 
   # defaults
