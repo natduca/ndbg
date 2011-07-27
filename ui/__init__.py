@@ -11,19 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from util import *
-from main_window import MainWindow
-from main_control import *
-from debugger import DebuggerException
+from __future__ import absolute_import
 
+# our exports
+from .main_window_base import MainWindowBase
+from .main_control_base import MainControlBase
+from .resources import Resources
+
+# our imports needed for implementing run()
+from util import MessageLoop
 import ndbg
-import glib
+from .platform import MainWindow, MainControl
 
 _running = False
 _mc = None
-
-def __init__():
-  print "UI module initialized"
 
 def run(settings, load_cb=None):
   global _running
@@ -46,7 +47,7 @@ def run(settings, load_cb=None):
       return False # ensure the timeout is a one-time thing
     def on_ready(*args):
       log2("UI init: window shown, scheduling load in 200ms")
-      glib.timeout_add(200, run_load_cb)
+      MessageLoop.add_delayed_message(run_load_cb, 200)
     if load_cb:
       mw.connect('show', on_ready)
 

@@ -37,6 +37,8 @@ try:
   import ui
   from ui.main_control_launcher import *
 except:
+  print "While importing ui:"
+  traceback.print_exc()
   ui = None
 
 def _onsig_USR1(signum, frame):
