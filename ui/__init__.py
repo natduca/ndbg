@@ -19,7 +19,7 @@ from .main_control_base import MainControlBase
 from .resources import Resources
 
 # our imports needed for implementing run()
-from util import MessageLoop
+from util import MessageLoop,log0,log1,log2
 import ndbg
 from .platform import MainWindow, MainControl
 
