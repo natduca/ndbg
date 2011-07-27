@@ -24,7 +24,6 @@
 
 from util import *
 from resources import *
-from main_window import *
 
 class MainWindowOverlay(object):
   @staticmethod
@@ -415,4 +414,3 @@ class _OverlayItem(object):
 
     if ovl.enabled == False:
       self._disable()
-
