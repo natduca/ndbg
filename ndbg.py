@@ -154,9 +154,10 @@ def launch_in_existing(options, args):
 
 
 def run_ui(options, args):
+  global ui
   if not ui:
     print "Cannot run UI.\n"
-    return 0
+    return 255
 
   settings = new_settings()
 
@@ -175,6 +176,13 @@ def run_ui(options, args):
   elif hasattr(options,"sourceview") and options.sourceview:
     settings.set_temporarily("Editor", "SourceViewEditor")
 
+  if settings.Editor == 'GVimEditor':
+    import ui.gvim_editor
+    ok, error = ui.gvim_editor.SanityCheck(settings)
+    if not ok:
+      print error
+      return 255
+
   # debuger init
   settings.register("ExecLaunch", list, None)
   settings.register("ExecAttach", int, -1)
@@ -188,6 +196,7 @@ def run_ui(options, args):
 
   # UI init
   ui.run(settings) # engages main loop
+  return 0
 
 def main():
   # basic options
@@ -253,5 +262,3 @@ if __name__ == "__main__":
     log1("Exiting via os._exit")
     os._exit(0) # do this so we truly exit... even if we have a lingering thread [eew]
 #  assert(False)
-
-

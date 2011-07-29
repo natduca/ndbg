@@ -25,6 +25,62 @@ from editor_base import *
 
 _USE_ASYNC = False
 
+def SanityCheck(settings):
+  """
+  Makes sure vim aliases/scripts aren't wrapping the actual vim executable.
+  """
+  ok,status = _SanityCheckInternal(settings)
+  if not ok:
+    status ="""While trying to launch, ndbg encountered a problem with your current
+system's vim configuration:
+
+%s
+""" % (status)
+  return (ok, status)
+
+def _TryCommunicate(args):
+  try:
+    p = subprocess.Popen(args, stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+  except OSError:
+    return None
+  return p.communicate()[0]
+
+def _SanityCheckInternal(settings):
+  settings.register("GVimEditorVimExecutable", str, "vim")
+  resp = _TryCommunicate([settings.GVimEditorVimExecutable, "--version"])
+  if resp == None or not resp.startswith("VIM - Vi IMproved "):
+    resp2 = _TryCommunicate(["/usr/bin/vim", "--version"])
+    if resp2.startswith("VIM - Vi IMproved "):
+      return (False,"""%s existed but did respond as expected to --version.
+However, /usr/bin/vim exists and responds as expected. Maybe you've aliased vim.
+
+Consider adding a field to ~/.ndbg to point at vim directly:
+  "GVimEditorVimExecutable": "/usr/bin/vim"
+
+""" % settings.GVimEditorVimExecutable)
+    if resp == None:
+      return (False, """Could not launch executable. Do you have vim at all?""")
+
+    return (False,""""vim existed but did respond as expected to --version.
+
+Maybe you have your path poitned at something wierd. If needed, add a field
+ ~/.ndbg to point at the vim executable:
+
+  "GVimEditorVimExecutable": "/usr/bin/vim"
+
+""")
+
+  lines = resp.split('\n')
+
+  expected_args = set(['gtk', 'clientserver', 'X11'])
+  found_args = set()
+  for a in expected_args:
+    if resp.find(a) != -1:
+      found_args.add(a)
+  if found_args != expected_args:
+    return (False, "Missing support for %s\n" % ", ".join(expected_args))
+  return (True, "OK")
+
 # This class implements EditorBase via gvim using a gtksocket
 class GVimEditor(EditorBase):
   def __init__(self, mc):
@@ -39,6 +95,7 @@ class GVimEditor(EditorBase):
       b.add_close_button()
       mc.butter_bar_collection.add_bar(b)
 
+    mc.settings.register("GVimEditorVimExecutable", str, "vim")
 
     ed = self
     class MyEBox(gtk.EventBox):
@@ -101,7 +158,7 @@ As a nDBG user, you have two options:
         log2("Vim exited gracefully.")
 
   def _determine_server_name(self):
-    resp = subprocess.Popen(["vim", "--serverlist"], stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+    resp = subprocess.Popen([self.mc.settings.GVimEditorVimExecutable, "--serverlist"], stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
     serverlist = resp.split("\n")
     template = "NDBG%i"
     i = 0
@@ -168,7 +225,7 @@ As a nDBG user, you have two options:
   def _wait_for_vim_to_become_alive(self):
     # wait until we get vim up and responding to serverlist
     def server_running():
-      resp = subprocess.Popen(["vim", "--serverlist"], stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()
+      resp = subprocess.Popen([self.mc.settings.GVimEditorVimExecutable, "--serverlist"], stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()
       if resp[0].find(self._server_name) != -1:
         log2("VIM confirmed alive")
         self._vim_alive = True
@@ -177,7 +234,7 @@ As a nDBG user, you have two options:
     MessageLoop.run_until(server_running)
 
   def _check_alive(self):
-    resp = subprocess.Popen(["vim", "--serverlist"], stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+    resp = subprocess.Popen([self.mc.settings.GVimEditorVimExecutable, "--serverlist"], stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
     serverlist = resp.split("\n")
     if self._server_name not in serverlist:
       log0("Vim exited. Quitting ndbg as well.")
@@ -238,7 +295,7 @@ As a nDBG user, you have two options:
 #    if _USE_ASYNC:
 #      self.grab_focus()
 
-    args = ["vim", "--servername", self._server_name, "--remote-expr", "NdbgRunScript(\'%s\')" % tmp_file.name]
+    args = [self.mc.settings.GVimEditorVimExecutable, "--servername", self._server_name, "--remote-expr", "NdbgRunScript(\'%s\')" % tmp_file.name]
     proc = subprocess.Popen(args, stdout=subprocess.PIPE)
     if not async or not _USE_ASYNC:
       proc.wait()
@@ -255,7 +312,7 @@ As a nDBG user, you have two options:
 #    res= self._pending_flush_proc.poll()
 #    if res:
 #      print "Redrawing"
-#      xa = ["vim", "--servername", self._server_name, "--remote-expr", "NdbgRedraw()"]
+#      xa = [self.mc.settings.GVimEditorVimExecutable, "--servername", self._server_name, "--remote-expr", "NdbgRedraw()"]
 #      x = subprocess.Popen(xa, stdout=subprocess.PIPE)
 #      return False
 #    else:
@@ -298,4 +355,3 @@ As a nDBG user, you have two options:
     self.push_remote_expr("NdbgLineMarkStates(%s, %s, %s, '%s')" %
                          (vim_added, vim_changed, removed,
                           file_handle.absolute_name))
-
