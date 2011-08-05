@@ -14,8 +14,6 @@
 import gtk
 import debugger
 from util import *
-from quick_open_dialog import *
-from goto_method_dialog import *
 
 import os
 class NoCurrentLocationException(Exception):
@@ -94,10 +92,6 @@ class EditorBase(object):
 
     # additions to the debug overlay --- which is only visible in breakpoint mode, iirw
     self._mc.always_overlay.add_debug_menu_item('editor.toggle_breakpoint', self._on_toggle_breakpoint)
-
-    # file-open modifier
-    self._overlay.add_file_menu_item('editor.quick_open', self._on_quick_open_file);
-    self._overlay.add_file_menu_item('editor.goto_method', lambda x,y: self._on_goto_method())
 
     # monitor current and active frames, breakpoint list
     self._update_marks_scheduled = False
@@ -303,26 +297,6 @@ class EditorBase(object):
     self._line_marks_by_loc = new_line_marks_by_loc
 
   # other innards
-  def _on_quick_open_file(self,*unused):
-    dlg = QuickOpenDialog(self._mc.settings, self._mc.filemanager.progdb)
-    res = dlg.run()
-    if res == gtk.RESPONSE_OK:
-      selected_files = list(dlg.selected_files)
-    dlg.destroy()
-    def do_open_file():
-      for fn in selected_files:
-        fh = self._mc.filemanager.find_file(fn)
-        if fh.exists:
-          self.focus_file(fh)
-          self._do_grab_focus()
-    # For some reason, Gtk doesn't actually finish hiding the dialog
-    # until we return to the main loop. In the case of the
-    # EmacsEditor, the act of focusing a file that has changed will
-    # lead to the focus_file call blocking on an emacs "file has
-    # changed" warning. To avoid this, we
-    if res == gtk.RESPONSE_OK:
-      MessageLoop.add_delayed_message(do_open_file,100)
-
   def open_file(self,requested_filename):
     fh = self.mc.filemanager.find_file(requested_filename)
     if fh.exists:

@@ -15,7 +15,6 @@ import os.path
 import exceptions
 from util import *
 from . import *
-import progdb
 import traceback
 
 class FileHandle(object):
@@ -88,21 +87,8 @@ class FileManager(object):
     self._files_by_absolute_name = {} # todo, keep these by weak reference?
     self._files_by_alias = {} # todo, keep these by weak reference?
 
-    self._progdb = RemoteClass(progdb.Database)
-    for ign in self._settings.FileManager_ProgDB_Ignores:
-      try:
-        re.compile(ign)
-        self._progdb.call_async.add_ignore( ign )
-      except:
-        log0("While compiling FileManager_ProgDB_Ignore %s:", ign)
-        traceback.print_exc()
-
-  @property
-  def progdb(self):
-    return self._progdb
-
   def shutdown(self):
-    self._progdb.shutdown()
+    pass
 
 
   def _on_processes_added(self,proc):
@@ -115,8 +101,6 @@ class FileManager(object):
     dirs.append(proc.target_cwd)
 
     for d in dirs:
-      self._progdb.call_async.add_search_path(d)
-    for d in dirs:
       self._file_search_path.add(d)
 
     self._locate_missing_files()
@@ -128,7 +112,6 @@ class FileManager(object):
   def add_search_path(self,path):
     path = os.path.realpath(path)
     self._file_search_path.add(path)
-    self._progdb.call_async.add_search_path(path)
     self._locate_missing_files()
 
   def _locate_missing_files(self):
