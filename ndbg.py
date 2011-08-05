@@ -135,8 +135,8 @@ def launch_in_existing(options, args):
     return
 
   # get MainControl proxies in existing ndbg processes
-  from ui.main_control import MainControl
-  mcs = MainControl.get_all_remote_instances()
+  from ui.main_control_base import MainControlBase
+  mcs = MainControlBase.get_all_remote_instances()
 
   # If no ndbg exists, prompt the user to launch a new one
   # TODO(nduca): multiple dialogs may be presented at once. If they press yes on one,
