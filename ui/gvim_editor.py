@@ -22,6 +22,7 @@ import subprocess
 import tempfile
 
 from editor_base import *
+from butter_bar import *
 
 _USE_ASYNC = False
 
