@@ -29,6 +29,7 @@ all: $(APPS)
 test_shared: test_shared.o
 	g++ -o $@ $^ -ltest_shared -L.
 
+libtest_shared.o: CXXFLAGS+=-fPIC
 libtest_shared.so: libtest_shared.o
 	g++ -shared -o $@ $^
 
